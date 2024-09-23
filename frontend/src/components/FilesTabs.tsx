@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { filesTabs, randomFilesInterface } from "./randomData";
+import { filesTabs, randomFilesInterface } from "../utils/randomData";
 
 export const FilesTabs: React.FC = () => {
   const [tabs, setTabs] = useState<randomFilesInterface[]>(filesTabs);
