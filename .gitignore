@@ -1,2 +1,2 @@
-.env
-Project sheets master.docx
+*.docx
+*.txt
