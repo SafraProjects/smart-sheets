@@ -1,0 +1,135 @@
+:root {
+  --direction: ltr;
+  --opposite-direction: rtl;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.nav-bar {
+  width: 100%;
+  height: 70px;
+  border-bottom: 1.8px solid rgb(227, 227, 227);
+}
+
+.user-main-area {
+  direction: var(--direction);
+  display: flex;
+  height: 100vh;
+  justify-content: space-between;
+
+  width: 100%;
+  border: 1.8px solid rgb(227, 127, 127);
+}
+
+.side-options {
+  display: flex;
+  flex-direction: column;
+
+  height: 100%;
+  width: 60px;
+}
+
+.user-files {
+  padding-top: 5px;
+  width: 100%;
+  height: 100%;
+  border: 1.8px solid rgb(227, 227, 227);
+}
+
+.tab-files-area {
+  position: relative; /* הוסף את זה */
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  width: 100%;
+  height: 30px;
+}
+
+.tab-files-area::after {
+  content: "";
+  position: absolute;
+  bottom: 0; /* מבטיח שהקו יופיע בתחתית */
+  left: 0;
+  z-index: -1;
+  width: 100%;
+  height: 2px;
+  border-bottom: 2px solid rgba(199, 199, 199, 0.368);
+}
+
+.tab-file {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 5px;
+
+  height: 100%;
+  max-width: 100px;
+
+  background-color: rgba(245, 245, 245, 0.694);
+
+  border: 2px solid rgb(227, 227, 227);
+  border-top-left-radius: 20px;
+  border-top-right-radius: 5px;
+}
+
+span {
+  font-size: 0.9rem;
+}
+
+.tab-file.active {
+  border-bottom: none;
+  background-color: white;
+}
+
+.btn-close-tab {
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  height: 15px;
+  width: 15px;
+
+  color: rgb(228, 228, 228);
+
+  border-radius: 50%;
+  margin: 10px;
+  margin-bottom: 7px;
+  margin-left: 0;
+  font-size: 0.8rem;
+}
+
+.btn-close-tab:hover {
+  background-color: rgba(194, 194, 194, 0.427);
+  color: black;
+}
+
+.btn-add-file {
+  height: 25px;
+  width: 25px;
+  margin: 7px;
+
+  border: none;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  background-color: rgba(255, 255, 255, 0);
+}
+
+.btn-add-file:hover {
+  background-color: rgb(237, 237, 237);
+}
+
+.table-area {
+}
+
+@media (max-width: 440px) {
+  .side-options {
+    width: 50px;
+  }
+}
