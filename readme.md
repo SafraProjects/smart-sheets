@@ -34,7 +34,7 @@
   - Order by
   - Search
   - Open row
-  -
+  - multi select
 
 * chose a language
 * create repo and jira and slack to the
