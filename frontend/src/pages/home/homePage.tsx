@@ -1,5 +1,4 @@
-import { useState } from "react";
-import React from "react";
+import React, { useState } from "react";
 
 export const HomePage: React.FC = () => {
   const [text, setText] = useState<string>("");

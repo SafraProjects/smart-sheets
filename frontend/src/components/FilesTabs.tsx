@@ -1,15 +1,18 @@
+import { faPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 import { filesTabs, randomFilesInterface } from "../utils/randomData";
 
 export const FilesTabs: React.FC = () => {
   const [tabs, setTabs] = useState<randomFilesInterface[]>(filesTabs);
-  const [activeTab, setActiveTab] = useState<number>();
+  const [activeTab, setActiveTab] = useState<number>(1);
 
   const onCloseTab = (id: number) => {
     const updatedTabs = tabs.filter((tab) => tab.id !== id);
+    const tabIndex = tabs.findIndex((tab) => tab.id === id) - 1;
     setTabs(updatedTabs);
     if (activeTab === id && updatedTabs.length > 0) {
-      setActiveTab(updatedTabs[0].id);
+      setActiveTab(tabIndex > 0 ? tabs[tabIndex].id : updatedTabs[0].id);
     }
   };
 
@@ -43,13 +46,17 @@ export const FilesTabs: React.FC = () => {
               onCloseTab(tab.id);
             }}
           >
-            x
+            <FontAwesomeIcon icon={faTimes} />
           </div>
           <span>{tab.name}</span>
         </div>
       ))}
-      <button className="btn-add-file" onClick={() => handleAddTab()}>
-        +
+      <button
+        className="btn-add-file"
+        onClick={() => handleAddTab()}
+        title="הוספת קובץ"
+      >
+        <FontAwesomeIcon icon={faPlus} />
       </button>
     </div>
   );
