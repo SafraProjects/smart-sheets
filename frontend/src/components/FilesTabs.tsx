@@ -76,11 +76,7 @@ export const FilesTabs: React.FC = () => {
         <FontAwesomeIcon icon={faPlus} />
       </button>
 
-      <Modal
-        isOpen={isOpen}
-        onClose={handleClose}
-        selected={tableOptionSelected !== null}
-      >
+      <Modal isOpen={isOpen} onClose={handleClose}>
         <h2>add table</h2>
         <div
           onClick={() => setTableOptionSelected("upload file")}
