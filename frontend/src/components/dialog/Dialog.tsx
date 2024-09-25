@@ -5,15 +5,9 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
-  selected: boolean;
 }
 
-const Modal: React.FC<ModalProps> = ({
-  isOpen,
-  onClose,
-  children,
-  selected,
-}) => {
+const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
   return (
     <div className={`modal ${isOpen ? "open" : "close"}`} onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -23,10 +17,10 @@ const Modal: React.FC<ModalProps> = ({
           </button>
         </div>
         <div className="modal-body">{children}</div>
-        <div className="modal-fote">
+        {/* <div className="modal-fote">
           <button onClick={onClose}>close</button>
           {selected && <button onClick={onClose}>next</button>}
-        </div>
+        </div> */}
       </div>
     </div>
   );
