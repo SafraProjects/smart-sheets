@@ -4,26 +4,27 @@
 
 - this platform hem to achieve perfect and flexible file management with some more fetchers like calculations to holds the tasks and manage at perfectly on time and to be able of sending messages to WhatsApp and Email abut the need's to be done
 
-* research
-* characterization
+* Users , research , characterization >>>
 
-- Home page
-
-- Users
   - Security
   - Profiling
+  - DB-Mongo dynamic tables (users-table is fixd but forhech user file there is a table that changes)
   - Email, WhatsApp, ec'
-  -
-- User page
+
+* Home page
+
+* User page
 
   - sheets
     - Uploading files
       - S3
     - Conversion to CSV
+      - some issu with multibol sheets that i need to fix
     - Dynamic table
-    - Roes
+      - DB-Mongo
+    - Rows
       - add, delete, update
-    - Column
+    - Columns
       - add, delete, update
     - Show
       - Column, Roes

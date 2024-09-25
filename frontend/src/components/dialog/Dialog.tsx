@@ -23,10 +23,10 @@ const Modal: React.FC<ModalProps> = ({
           </button>
         </div>
         <div className="modal-body">{children}</div>
-        <div className="modal-fote">
+        {/* <div className="modal-fote">
           <button onClick={onClose}>close</button>
           {selected && <button onClick={onClose}>next</button>}
-        </div>
+        </div> */}
       </div>
     </div>
   );

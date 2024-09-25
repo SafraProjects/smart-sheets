@@ -28,8 +28,7 @@
   min-height: 200px;
   position: relative;
   border: 2px solid var(--border-col);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1),
-    /* הצללה רכה מסביב */ 0 2px 4px rgba(0, 0, 0, 0.06); /* הצללה רכה יותר מלמטה */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
 }
 
 .modal-header {
