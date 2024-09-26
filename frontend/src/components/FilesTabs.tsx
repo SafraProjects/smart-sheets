@@ -47,60 +47,62 @@ export const FilesTabs: React.FC = () => {
   };
 
   return (
-    <div className="tab-files-area">
-      {tabs.map((tab) => (
-        <div
-          key={tab.id}
-          onClick={() => setActiveTab(tab.id)}
-          className={`tab-file  ${activeTab === tab.id ? "active" : ""}`}
-          role="tab"
-          aria-selected={activeTab === tab.id}
-        >
+    <>
+      <div className="tab-files-area" role="tablist">
+        {tabs.map((tab) => (
           <div
-            className="btn-close-tab"
-            onClick={(e) => {
-              e.stopPropagation();
-              onCloseTab(tab.id);
-            }}
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`tab-file  ${activeTab === tab.id ? "active" : ""}`}
+            role="tab"
+            aria-selected={activeTab === tab.id}
           >
-            <FontAwesomeIcon icon={faTimes} />
+            <div
+              className="btn-close-tab"
+              onClick={(e) => {
+                e.stopPropagation();
+                onCloseTab(tab.id);
+              }}
+            >
+              <FontAwesomeIcon icon={faTimes} />
+            </div>
+            <span>{tab.name}</span>
           </div>
-          <span>{tab.name}</span>
-        </div>
-      ))}
-      <button
-        className="btn-add-file"
-        onClick={() => handleOpen()}
-        title="הוספת קובץ"
-      >
-        <FontAwesomeIcon icon={faPlus} />
-      </button>
+        ))}
+        <button
+          className="btn-add-file"
+          onClick={() => handleOpen()}
+          title="הוספת קובץ"
+        >
+          <FontAwesomeIcon icon={faPlus} />
+        </button>
 
-      <Modal isOpen={isOpen} onClose={handleClose}>
-        <h2>add table</h2>
-        <div
-          onClick={() => setTableOptionSelected("upload file")}
-          className={`add-file ${
-            tableOptionSelected === "upload file" ? "selected" : ""
-          }`}
-        >
-          upload exle file
-          <div className="add-file-icon">
-            <FontAwesomeIcon icon={faFileUpload}></FontAwesomeIcon>
+        <Modal isOpen={isOpen} onClose={handleClose}>
+          <h2>add table</h2>
+          <div
+            onClick={() => setTableOptionSelected("upload file")}
+            className={`add-file ${
+              tableOptionSelected === "upload file" ? "selected" : ""
+            }`}
+          >
+            upload exle file
+            <div className="add-file-icon">
+              <FontAwesomeIcon icon={faFileUpload}></FontAwesomeIcon>
+            </div>
           </div>
-        </div>
-        <div
-          onClick={() => setTableOptionSelected("create table")}
-          className={`add-file ${
-            tableOptionSelected === "create table" ? "selected" : ""
-          }`}
-        >
-          create table
-          <div className="add-file-icon">
-            <FontAwesomeIcon icon={faTable}></FontAwesomeIcon>
+          <div
+            onClick={() => setTableOptionSelected("create table")}
+            className={`add-file ${
+              tableOptionSelected === "create table" ? "selected" : ""
+            }`}
+          >
+            create table
+            <div className="add-file-icon">
+              <FontAwesomeIcon icon={faTable}></FontAwesomeIcon>
+            </div>
           </div>
-        </div>
-      </Modal>
-    </div>
+        </Modal>
+      </div>
+    </>
   );
 };
