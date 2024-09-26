@@ -1,0 +1,15 @@
+.step {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.step .prev,
+.step .next {
+  color: var(--border-col);
+  font-size: 2rem;
+}
+
+.step .active {
+  color: var(--icons-col);
+}

@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 import { filesTabs, randomFilesInterface } from "../utils/randomData";
 import Modal from "./dialog/Dialog";
+import { Steps } from "./steps/Steps";
 
 export const FilesTabs: React.FC = () => {
   const [tabs, setTabs] = useState<randomFilesInterface[]>(filesTabs);
@@ -77,29 +78,39 @@ export const FilesTabs: React.FC = () => {
       </button>
 
       <Modal isOpen={isOpen} onClose={handleClose}>
-        <h2>add table</h2>
-        <div
-          onClick={() => setTableOptionSelected("upload file")}
-          className={`add-file ${
-            tableOptionSelected === "upload file" ? "selected" : ""
-          }`}
-        >
-          upload exle file
-          <div className="add-file-icon">
-            <FontAwesomeIcon icon={faFileUpload}></FontAwesomeIcon>
-          </div>
-        </div>
-        <div
-          onClick={() => setTableOptionSelected("create table")}
-          className={`add-file ${
-            tableOptionSelected === "create table" ? "selected" : ""
-          }`}
-        >
-          create table
-          <div className="add-file-icon">
-            <FontAwesomeIcon icon={faTable}></FontAwesomeIcon>
-          </div>
-        </div>
+        <Steps
+          steps={[
+            <div className="add-file-select">
+              <h2>add table</h2>
+              <div
+                onClick={() => setTableOptionSelected("upload file")}
+                className={`add-file ${
+                  tableOptionSelected === "upload file" ? "selected" : ""
+                }`}
+              >
+                upload exle file
+                <div className="add-file-icon">
+                  <FontAwesomeIcon icon={faFileUpload}></FontAwesomeIcon>
+                </div>
+              </div>
+              <div
+                onClick={() => setTableOptionSelected("create table")}
+                className={`add-file ${
+                  tableOptionSelected === "create table" ? "selected" : ""
+                }`}
+              >
+                create table
+                <div className="add-file-icon">
+                  <FontAwesomeIcon icon={faTable}></FontAwesomeIcon>
+                </div>
+              </div>
+            </div>,
+            <div className="add-file-select">
+              <div>dddddddd</div>
+            </div>,
+          ]}
+          isSelected={tableOptionSelected !== null}
+        />
       </Modal>
     </div>
   );
