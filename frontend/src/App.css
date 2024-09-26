@@ -23,11 +23,13 @@
 [dir="rtl"] {
   --direction: rtl;
   --opposite-direction: ltr;
+  text-align: right;
 }
 
 [dir="ltr"] {
   --direction: ltr;
   --opposite-direction: rtl;
+  text-align: left;
 }
 
 * {
