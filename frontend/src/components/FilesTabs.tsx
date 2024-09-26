@@ -47,7 +47,7 @@ export const FilesTabs: React.FC = () => {
   };
 
   return (
-    <div className="tab-files-area">
+    <div className="tab-files-area" role="tablist">
       {tabs.map((tab) => (
         <div
           key={tab.id}
