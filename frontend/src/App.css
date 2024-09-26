@@ -35,7 +35,14 @@
   padding: 0;
   box-sizing: border-box;
 }
+
 body {
+  /* font-family: 'Noto Sans Hebrew', sans-serif;
+  font-family: 'Frank Ruhl Libre', serif;
+  font-family: "Assistant", sans-serif;
+  font-family: 'David Libre', serif; */
+  font-family: "Open Sans", sans-serif;
+
   background-color: var(--background-col);
 }
 
