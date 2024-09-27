@@ -14,7 +14,7 @@ const TableFieldInput: React.FC = () => {
         type="text"
         value={inputValue}
         onChange={(e) => handleChange(e.target.value)}
-        placeholder="הכנס טקסט"
+        placeholder="v"
       />
     </div>
   );

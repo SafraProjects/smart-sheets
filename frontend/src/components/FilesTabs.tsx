@@ -9,6 +9,7 @@ import React, { useState } from "react";
 import { filesTabs, randomFilesInterface } from "../utils/randomData";
 import Modal from "./dialog/Dialog";
 import { Steps } from "./steps/Steps";
+import { useLanguage } from "../contexts/languageContext";
 
 export const FilesTabs: React.FC = () => {
   const [tabs, setTabs] = useState<randomFilesInterface[]>(filesTabs);
@@ -17,6 +18,7 @@ export const FilesTabs: React.FC = () => {
   const [tableOptionSelected, setTableOptionSelected] = useState<string | null>(
     null
   );
+  const { getText } = useLanguage();
   const handleOpen = () => {
     setIsOpen(true);
     // handleAddTab();
@@ -81,14 +83,14 @@ export const FilesTabs: React.FC = () => {
         <Steps
           steps={[
             <div className="add-file-select">
-              <h2>add table</h2>
+              <h2>{getText("tableTitle")}</h2>
               <div
                 onClick={() => setTableOptionSelected("upload file")}
                 className={`add-file ${
                   tableOptionSelected === "upload file" ? "selected" : ""
                 }`}
               >
-                upload exle file
+                {getText("uploadedFile")}
                 <div className="add-file-icon">
                   <FontAwesomeIcon icon={faFileUpload}></FontAwesomeIcon>
                 </div>
@@ -99,7 +101,7 @@ export const FilesTabs: React.FC = () => {
                   tableOptionSelected === "create table" ? "selected" : ""
                 }`}
               >
-                create table
+                {getText("createTable")}
                 <div className="add-file-icon">
                   <FontAwesomeIcon icon={faTable}></FontAwesomeIcon>
                 </div>

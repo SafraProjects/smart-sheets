@@ -1,5 +1,5 @@
 export type Language = "he" | "en";
-export type KeyLanguageWords = "button";
+export type KeyLanguageWords = "button" | "tableTitle" | "uploadedFile" | "createTable" | "tableFieldPlaceholder";
 
 export interface LanguageContextProps {
   language: Language;

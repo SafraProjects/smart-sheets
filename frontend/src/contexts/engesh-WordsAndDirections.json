@@ -1,8 +1,16 @@
 {
   "he": {
-    "button": "A <= א"
+    "button": "A <= א",
+    "tableTitle": "הוסף טבלה",
+    "uploadedFile": "העלה קובץ",
+    "createTable": "צור טבלה",
+    "tableFieldPlaceholder": "הוסף שדה"
   },
   "en": {
-    "button": "A => א"
+    "button": "A => א",
+    "tableTitle": "add table",
+    "uploadedFile": "uploaded file",
+    "createTable": "create table",
+    "tableFieldPlaceholder": "add field"
   }
 }

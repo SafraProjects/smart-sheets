@@ -1,8 +1,8 @@
 /* base setings options */
 :root {
   /* directions */
-  --direction: ltr;
-  --opposite-direction: rtl;
+  --rtl: rtl;
+  --ltr: ltr;
 
   /* colors */
   --background-col: rgb(253, 253, 253);
@@ -13,7 +13,7 @@
   --border-col: rgb(200, 200, 200);
   --text-col: rgb(200, 200, 200);
 
-  --file-area-col: rgb(223, 255, 251);
+  --file-area-col: rgb(235, 235, 235);
   --white-col: white;
 
   /* else */
@@ -58,7 +58,6 @@ body {
 
 /* main */
 .user-main-area {
-  direction: var(--direction);
   display: flex;
   height: 100vh;
   justify-content: space-between;
@@ -77,7 +76,7 @@ body {
   height: 100%;
   width: 60px;
 
-  border-inline-end: 2px solid rgb(227, 227, 227);
+  border-inline-start: 2px solid rgb(227, 227, 227);
 }
 
 .user-files {
@@ -88,7 +87,7 @@ body {
 
 /* >>>  tabs */
 .tab-files-area {
-  /* direction: var(--opposite-direction); */
+  direction: var(--opposite-direction);
 
   display: flex;
   flex-direction: row-reverse;
@@ -130,17 +129,29 @@ body {
   border-bottom: 2px solid rgba(199, 199, 199, 0.368);
 }
 
-.tab-file {
-  /* direction: var(--direction); */
-  flex-shrink: 0 0;
-  flex: 0 0 auto;
+.wheat-for-table {
   display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+  height: 100%;
+
+  background: url("./assets/background.svg");
+  background-size: 80%;
+  background-position: 50%;
+  background-repeat: no-repeat;
+}
+
+.tab-file {
+  display: flex;
+  flex-shrink: 0 0;
 
   justify-content: space-between;
   align-items: center;
 
   height: 100%;
-  width: 80px;
+  width: 100px;
 
   margin: 0 2px;
   padding: 0 4px 0 4px;
@@ -154,8 +165,9 @@ body {
 
 /* tab file name */
 span {
-  direction: var(--opposite-direction);
-  font-size: 0.9rem;
+  direction: var(--direction);
+  font-size: 0.8rem;
+  margin-inline-start: 3px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

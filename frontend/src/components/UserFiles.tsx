@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { Table } from "./Table";
 import { FilesTabs } from "./FilesTabs";
 
 export const UserFiles: React.FC = () => {
+  const [isTableCreated, setIsTableCreated] = useState<boolean>(false);
   return (
     <div className="user-files">
       <FilesTabs />
       <div className="table-area">
-        <Table />
+        {isTableCreated ? <Table /> : <div className="wheat-for-table"></div>}
       </div>
     </div>
   );
