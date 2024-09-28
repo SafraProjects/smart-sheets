@@ -8,8 +8,8 @@ export const UserPage: React.FC = () => {
     <>
       <NavBar />
       <div className="user-main-area">
-        <SideOptions />
         <UserFiles />
+        <SideOptions />
       </div>
     </>
   );
