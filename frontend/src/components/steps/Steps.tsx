@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./steps.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretLeft, faCaretRight } from "@fortawesome/free-solid-svg-icons";
@@ -6,20 +6,30 @@ import { faCaretLeft, faCaretRight } from "@fortawesome/free-solid-svg-icons";
 interface StepsProps {
   classSize: number;
   steps: React.ReactNode[]; // התוכן לכל צעד (מוגדר מבחוץ)
-  isSelected: boolean;
+  optionSelected: string | null;
   numOfSteps: number;
 }
 
 export const Steps: React.FC<StepsProps> = ({
   steps,
-  isSelected,
+  optionSelected,
   classSize,
   numOfSteps,
 }) => {
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
-  const [rapClassSize, setrapClassSize] = useState<string>(
-    classSize === 250 ? "rap-flx-250-350" : "rap-flx-200-300"
-  );
+  const [Steps, setSteps] = useState<React.ReactNode[]>(steps);
+  useEffect(() => {
+    if (optionSelected) {
+      if (optionSelected === "upload file") {
+        setSteps(steps.filter((_, index) => index % 2 === 0));
+      } else {
+        setSteps(steps.filter((_, index) => index === 0 || index % 2 !== 0));
+      }
+    }
+  }, [optionSelected]);
+
+  const canGoNext = currentStepIndex < Steps.length - 1 && !!optionSelected;
+  const canGoPrev = currentStepIndex > 0 && !!optionSelected;
 
   const handleNext = () => {
     if (canGoNext) {
@@ -33,20 +43,19 @@ export const Steps: React.FC<StepsProps> = ({
     }
   };
 
-  const canGoNext = currentStepIndex < steps.length - 1 && isSelected;
-  const canGoPrev = currentStepIndex > 0 && isSelected;
-
   return (
     <div className="step">
       <div className={`prev ${canGoPrev ? "active" : ""}`} onClick={handlePrev}>
         <FontAwesomeIcon icon={faCaretLeft} />
       </div>
       <div className="step-content">
-        <div className={rapClassSize}>{steps[currentStepIndex]}</div>
-        <div className="dots">
+        <div className={"rap-flx-" + classSize}>
+          <div className="rap-step">{Steps[currentStepIndex]}</div>
+        </div>
+        <div className="steps-dots">
           {Array.from({ length: numOfSteps }, (_, index) => (
             <div
-              className={`dot ${index + 1 === 2 ? "active" : ""}`}
+              className={`dot ${index === currentStepIndex ? "active" : ""}`}
               key={index}
             ></div>
           ))}
