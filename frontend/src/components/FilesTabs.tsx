@@ -19,6 +19,7 @@ export const FilesTabs: React.FC = () => {
     null
   );
   const { getText } = useLanguage();
+
   const handleOpen = () => {
     setIsOpen(true);
     // handleAddTab();

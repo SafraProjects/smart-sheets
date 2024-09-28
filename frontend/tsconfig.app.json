@@ -20,5 +20,5 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "contexts/contextsTyps.ts"]
+  "include": ["src", "./crs/contexts/contextsTyps.ts"]
 }
