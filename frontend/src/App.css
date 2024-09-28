@@ -244,13 +244,6 @@ span {
   border-color: rgb(212, 211, 211);
 }
 
-.add-file-select {
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-
-  gap: 10px;
-}
 .add-file {
   padding: 12px 10px;
 
