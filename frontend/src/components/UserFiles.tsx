@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Table } from "./Table";
 import { FilesTabs } from "./FilesTabs";
+import "./componentStyle.css";
 
 export const UserFiles: React.FC = () => {
   const [isTableCreated, setIsTableCreated] = useState<boolean>(false);
@@ -8,7 +9,7 @@ export const UserFiles: React.FC = () => {
     <div className="user-files">
       <FilesTabs />
       <div className="table-area">
-        {isTableCreated ? <Table /> : <div className="wheat-for-table"></div>}
+        {isTableCreated ? <Table /> : <div className="table"></div>}
       </div>
     </div>
   );

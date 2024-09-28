@@ -81,9 +81,12 @@ export const FilesTabs: React.FC = () => {
 
       <Modal isOpen={isOpen} onClose={handleClose}>
         <Steps
+          optionSelected={tableOptionSelected}
+          classSize={200}
+          numOfSteps={3}
           steps={[
-            <div className="rap-step">
-              <h2>add table</h2>
+            <>
+              <h2>{getText("tableTitle")}</h2>
               <div
                 onClick={() => setTableOptionSelected("upload file")}
                 className={`add-file ${
@@ -106,16 +109,28 @@ export const FilesTabs: React.FC = () => {
                   <FontAwesomeIcon icon={faTable}></FontAwesomeIcon>
                 </div>
               </div>
-            </div>,
-            <div className="rap-step">
+            </>,
+            <>
               <div className="add-file-select">
-                <div>dddddddd</div>
+                <div>cr2</div>
               </div>
-            </div>,
+            </>,
+            <>
+              <div className="add-file-select">
+                <div>up2</div>
+              </div>
+            </>,
+            <>
+              <div className="add-file-select">
+                <div>cr3</div>
+              </div>
+            </>,
+            <>
+              <div className="add-file-select">
+                <div>up3</div>
+              </div>
+            </>,
           ]}
-          isSelected={tableOptionSelected !== null}
-          classSize={250}
-          numOfSteps={3}
         />
       </Modal>
     </div>
