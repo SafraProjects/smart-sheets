@@ -48,7 +48,7 @@
   border-bottom: 2px solid rgba(199, 199, 199, 0.368);
 }
 
-.wheat-for-table {
+.table {
   display: flex;
   justify-content: center;
   align-items: center;
