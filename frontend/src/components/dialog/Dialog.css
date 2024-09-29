@@ -55,7 +55,7 @@
 }
 
 .close-button:hover {
-  background: gold;
+  background: var(--back-btn-col);
 }
 
 .modal-body {
