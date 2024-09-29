@@ -1,15 +1,15 @@
 import {
-  faPlus,
-  faTimes,
   faFileUpload,
-  faTable,
+  faPlus,
+  faTableList,
+  faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
+import { useLanguage } from "../contexts/languageContext";
 import { filesTabs, randomFilesInterface } from "../utils/randomData";
 import Modal from "./dialog/Dialog";
 import { Steps } from "./steps/Steps";
-import { useLanguage } from "../contexts/languageContext";
 
 export const FilesTabs: React.FC = () => {
   const [tabs, setTabs] = useState<randomFilesInterface[]>(filesTabs);
@@ -94,7 +94,7 @@ export const FilesTabs: React.FC = () => {
                   tableOptionSelected === "upload file" ? "selected" : ""
                 }`}
               >
-                {getText("uploadedFile")}
+                <h4>{getText("uploadedFile")}</h4>
                 <div className="add-file-icon">
                   <FontAwesomeIcon icon={faFileUpload}></FontAwesomeIcon>
                 </div>
@@ -105,9 +105,9 @@ export const FilesTabs: React.FC = () => {
                   tableOptionSelected === "create table" ? "selected" : ""
                 }`}
               >
-                {getText("createTable")}
+                <h4>{getText("createTable")}</h4>
                 <div className="add-file-icon">
-                  <FontAwesomeIcon icon={faTable}></FontAwesomeIcon>
+                  <FontAwesomeIcon icon={faTableList}></FontAwesomeIcon>
                 </div>
               </div>
             </>,

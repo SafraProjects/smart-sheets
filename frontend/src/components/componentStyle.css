@@ -178,9 +178,9 @@ span {
 }
 
 .add-file {
-  padding: 12px 10px;
+  padding: 10px;
 
-  min-width: 250px;
+  width: 100%;
   min-height: 120px;
 
   font-size: 1rem;
@@ -189,6 +189,7 @@ span {
 
   background-color: var(--elements-col);
   border-radius: var(--border-rad);
+  transition: background-color 0.2s ease-in-out;
 }
 
 .add-file-icon {
@@ -197,7 +198,6 @@ span {
 }
 
 .add-file.selected {
-  padding: 10px;
-  border: 2px solid var(--border-col);
+  background-color: var(--back-btn-col);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
 }
