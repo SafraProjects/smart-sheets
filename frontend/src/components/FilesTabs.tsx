@@ -83,7 +83,7 @@ export const FilesTabs: React.FC = () => {
       <Modal isOpen={isOpen} onClose={handleClose}>
         <Steps
           optionSelected={tableOptionSelected}
-          classSize={200}
+          classSize={250}
           numOfSteps={3}
           steps={[
             <>
