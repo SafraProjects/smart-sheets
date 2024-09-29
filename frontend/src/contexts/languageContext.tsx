@@ -14,24 +14,27 @@ export const LanguageContext = createContext<LanguageContextProps | undefined>(
 export const LanguageProvider: React.FC<LanguageProviderProps> = ({
   children,
 }) => {
-  const [language, setLanguage] = useState<Language>("he"); // ברירת מחדל לעברית
-  const [isLoading, setIsLoading] = useState(true); // מצב טעינה
+  const [language, setLanguage] = useState<Language>("he");
 
   useEffect(() => {
+    setLanguageUp();
+  }, []);
+
+  const setLanguageUp = () => {
     const savedLanguage = localStorage.getItem("appLanguage") as Language;
     if (savedLanguage) {
       setLanguage(savedLanguage);
+    } else {
+      const dir = document.documentElement.getAttribute("dir");
+      setLanguage(dir === "rtl" ? "he" : "en");
     }
-    setIsLoading(false);
-  }, []);
+  };
 
   useEffect(() => {
-    if (language) {
-      document.documentElement.setAttribute(
-        "dir",
-        language === "he" ? "rtl" : "ltr"
-      );
-    }
+    document.documentElement.setAttribute(
+      "dir",
+      language === "he" ? "rtl" : "ltr"
+    );
   }, [language]);
 
   const toggleLanguage = () => {
@@ -41,13 +44,9 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({
   };
 
   const getText = (key: KeyLanguageWords) => {
-    if (!language || isLoading) {
-      return key; // אם השפה עדיין לא נטענה, החזר את המפתח
-    }
-    return texts[language][key] || key;
+    return texts[language]?.[key] || key;
   };
 
-  // הוספת key לקומפוננטה להבטחת רינדור מחדש
   return (
     <LanguageContext.Provider value={{ language, toggleLanguage, getText }}>
       <div key={language}>{children}</div>
