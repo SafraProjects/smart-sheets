@@ -1,5 +1,5 @@
 import React from "react";
-import { useLanguage } from "../contexts/languageContext";
+import { useLanguage } from "../../contexts/languageContext";
 
 const SideOptions: React.FC = () => {
   const { language, toggleLanguage, getText } = useLanguage();

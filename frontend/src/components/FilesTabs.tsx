@@ -6,10 +6,10 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
-import { useLanguage } from "../contexts/languageContext";
+import { useLanguage } from "../../contexts/languageContext";
 import { filesTabs, randomFilesInterface } from "../utils/randomData";
-import Modal from "../modules/dialog/Dialog";
-import { Steps } from "../modules/steps/Steps";
+import Modal from "../../modules/dialog/Dialog";
+import { Steps } from "../../modules/steps/Steps";
 
 export const FilesTabs: React.FC = () => {
   const [tabs, setTabs] = useState<randomFilesInterface[]>(filesTabs);
