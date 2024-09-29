@@ -8,8 +8,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 import { useLanguage } from "../contexts/languageContext";
 import { filesTabs, randomFilesInterface } from "../utils/randomData";
-import Modal from "./dialog/Dialog";
-import { Steps } from "./steps/Steps";
+import Modal from "../modules/dialog/Dialog";
+import { Steps } from "../modules/steps/Steps";
 
 export const FilesTabs: React.FC = () => {
   const [tabs, setTabs] = useState<randomFilesInterface[]>(filesTabs);
@@ -50,6 +50,55 @@ export const FilesTabs: React.FC = () => {
     }
   };
 
+  // list of add file or create table steps for steps component
+  const steps = [
+    <>
+      <h2>{getText("tableTitle")}</h2>
+      <div
+        onClick={() => setTableOptionSelected("upload file")}
+        className={`add-file ${
+          tableOptionSelected === "upload file" ? "selected" : ""
+        }`}
+      >
+        <h4>{getText("uploadedFile")}</h4>
+        <div className="add-file-icon">
+          <FontAwesomeIcon icon={faFileUpload}></FontAwesomeIcon>
+        </div>
+      </div>
+      <div
+        onClick={() => setTableOptionSelected("create table")}
+        className={`add-file ${
+          tableOptionSelected === "create table" ? "selected" : ""
+        }`}
+      >
+        <h4>{getText("createTable")}</h4>
+        <div className="add-file-icon">
+          <FontAwesomeIcon icon={faTableList}></FontAwesomeIcon>
+        </div>
+      </div>
+    </>,
+    <>
+      <div className="add-file-select">
+        <div>cr2</div>
+      </div>
+    </>,
+    <>
+      <div className="add-file-select">
+        <div>up2</div>
+      </div>
+    </>,
+    <>
+      <div className="add-file-select">
+        <div>cr3</div>
+      </div>
+    </>,
+    <>
+      <div className="add-file-select">
+        <div>up3</div>
+      </div>
+    </>,
+  ];
+
   return (
     <div className="tab-files-area" role="tablist">
       {tabs.map((tab) => (
@@ -82,56 +131,11 @@ export const FilesTabs: React.FC = () => {
 
       <Modal isOpen={isOpen} onClose={handleClose}>
         <Steps
-          optionSelected={tableOptionSelected}
-          classSize={250}
+          steps={steps}
           numOfSteps={3}
-          steps={[
-            <>
-              <h2>{getText("tableTitle")}</h2>
-              <div
-                onClick={() => setTableOptionSelected("upload file")}
-                className={`add-file ${
-                  tableOptionSelected === "upload file" ? "selected" : ""
-                }`}
-              >
-                <h4>{getText("uploadedFile")}</h4>
-                <div className="add-file-icon">
-                  <FontAwesomeIcon icon={faFileUpload}></FontAwesomeIcon>
-                </div>
-              </div>
-              <div
-                onClick={() => setTableOptionSelected("create table")}
-                className={`add-file ${
-                  tableOptionSelected === "create table" ? "selected" : ""
-                }`}
-              >
-                <h4>{getText("createTable")}</h4>
-                <div className="add-file-icon">
-                  <FontAwesomeIcon icon={faTableList}></FontAwesomeIcon>
-                </div>
-              </div>
-            </>,
-            <>
-              <div className="add-file-select">
-                <div>cr2</div>
-              </div>
-            </>,
-            <>
-              <div className="add-file-select">
-                <div>up2</div>
-              </div>
-            </>,
-            <>
-              <div className="add-file-select">
-                <div>cr3</div>
-              </div>
-            </>,
-            <>
-              <div className="add-file-select">
-                <div>up3</div>
-              </div>
-            </>,
-          ]}
+          classSize={250}
+          optionSelected={tableOptionSelected}
+          updateOptionSelect={setTableOptionSelected}
         />
       </Modal>
     </div>

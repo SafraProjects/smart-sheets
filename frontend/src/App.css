@@ -9,7 +9,7 @@
   --header-col: rgb(255, 241, 162);
   --elements-col: rgb(244, 244, 244);
   --buttons-col: ;
-  --back-btn-col: gold;
+  --back-btn-col: rgba(255, 179, 0, 0.489);
   --icons-col: rgb(162, 154, 255);
   --border-col: rgb(200, 200, 200);
   --text-col: rgb(38, 14, 99);
@@ -40,11 +40,12 @@
 }
 
 body {
-  /* font-family: 'Noto Sans Hebrew', sans-serif;
-  font-family: 'Frank Ruhl Libre', serif;
+  /* 
   font-family: "Assistant", sans-serif;
   font-family: 'David Libre', serif; */
-  font-family: "Open Sans", sans-serif;
+  /* font-family: "Open Sans", sans-serif; 
+  */
+  font-family: "Noto Sans Hebrew", sans-serif;
 
   background-color: var(--background-col);
 }

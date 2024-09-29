@@ -4,25 +4,30 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretLeft, faCaretRight } from "@fortawesome/free-solid-svg-icons";
 
 interface StepsProps {
-  classSize: number;
   steps: React.ReactNode[]; // התוכן לכל צעד (מוגדר מבחוץ)
-  optionSelected: string | null;
   numOfSteps: number;
+  classSize: number;
+  optionSelected: string | null;
+  updateOptionSelect: (setOptionSelected: string | null) => void;
 }
 
 export const Steps: React.FC<StepsProps> = ({
   steps,
-  optionSelected,
-  classSize,
   numOfSteps,
+  classSize,
+  optionSelected,
+  updateOptionSelect,
 }) => {
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
   const [direction, setDirection] = useState<"next" | "prev" | null>(null);
   const [transitioning, setTransitioning] = useState(false);
   const [Steps, setSteps] = useState<React.ReactNode[]>(steps);
 
-  const canGoNext = currentStepIndex < Steps.length - 1 && !!optionSelected;
-  const canGoPrev = currentStepIndex > 0 && !!optionSelected;
+  const canGoNext =
+    currentStepIndex < Steps.length - 1 &&
+    (currentStepIndex === 0 ? !!optionSelected : true);
+  const canGoPrev =
+    currentStepIndex > 0 && (currentStepIndex === 0 ? !!optionSelected : true);
 
   useEffect(() => {
     if (transitioning) {
@@ -50,6 +55,7 @@ export const Steps: React.FC<StepsProps> = ({
       setTransitioning(true);
       setTimeout(() => {
         setCurrentStepIndex((prev) => prev + 1);
+        updateOptionSelect(null);
       }, 500);
     }
   };
