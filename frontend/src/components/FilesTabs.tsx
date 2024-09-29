@@ -56,6 +56,7 @@ export const FilesTabs: React.FC = () => {
       <h2>{getText("tableTitle")}</h2>
       <div
         onClick={() => setTableOptionSelected("upload file")}
+        id="option"
         className={`add-file ${
           tableOptionSelected === "upload file" ? "selected" : ""
         }`}
@@ -67,6 +68,7 @@ export const FilesTabs: React.FC = () => {
       </div>
       <div
         onClick={() => setTableOptionSelected("create table")}
+        id="option"
         className={`add-file ${
           tableOptionSelected === "create table" ? "selected" : ""
         }`}

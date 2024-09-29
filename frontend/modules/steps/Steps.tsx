@@ -5,10 +5,10 @@ import { faCaretLeft, faCaretRight } from "@fortawesome/free-solid-svg-icons";
 
 interface StepsProps {
   steps: React.ReactNode[]; // התוכן לכל צעד (מוגדר מבחוץ)
-  numOfSteps: number;
-  classSize: number;
-  optionSelected: string | null;
-  updateOptionSelect: (setOptionSelected: string | null) => void;
+  numOfSteps?: number;
+  classSize?: number;
+  optionSelected?: string | null;
+  updateOptionSelect?: (setOptionSelected: string | null) => void | undefined;
 }
 
 export const Steps: React.FC<StepsProps> = ({
@@ -25,9 +25,17 @@ export const Steps: React.FC<StepsProps> = ({
 
   const canGoNext =
     currentStepIndex < Steps.length - 1 &&
-    (currentStepIndex === 0 ? !!optionSelected : true);
+    (currentStepIndex === 0 && optionSelected !== undefined
+      ? !!optionSelected
+      : true);
+
   const canGoPrev =
-    currentStepIndex > 0 && (currentStepIndex === 0 ? !!optionSelected : true);
+    currentStepIndex > 0 &&
+    (currentStepIndex === 0 && optionSelected !== undefined
+      ? !!optionSelected
+      : true);
+
+  const stepsLength = numOfSteps ? numOfSteps : steps.length;
 
   useEffect(() => {
     if (transitioning) {
@@ -49,13 +57,19 @@ export const Steps: React.FC<StepsProps> = ({
     }
   }, [optionSelected]);
 
+  // const handelCloseOptionSelect = () => {
+  //   if (optionSelected && updateOptionSelect) {
+  //     updateOptionSelect(null);
+  //   }
+  // };
+
   const handleNext = () => {
+    // handelCloseOptionSelect();
     if (canGoNext && !transitioning) {
       setDirection("next");
       setTransitioning(true);
       setTimeout(() => {
         setCurrentStepIndex((prev) => prev + 1);
-        updateOptionSelect(null);
       }, 500);
     }
   };
@@ -76,7 +90,7 @@ export const Steps: React.FC<StepsProps> = ({
         <FontAwesomeIcon icon={faCaretLeft} />
       </div>
       <div className="step-content">
-        <div className={"rap-flx-" + classSize}>
+        <div className={"rap-flx-" + (classSize ? classSize : 200)}>
           <div
             className={
               "rap-step " +
@@ -102,7 +116,7 @@ export const Steps: React.FC<StepsProps> = ({
           )}
         </div>
         <div className="steps-dots">
-          {Array.from({ length: numOfSteps }, (_, index) => (
+          {Array.from({ length: stepsLength }, (_, index) => (
             <div
               className={`dot ${index === currentStepIndex ? "active" : ""}`}
               key={index}
