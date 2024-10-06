@@ -1,0 +1,138 @@
+.rap-flx-250 {
+  position: relative;
+  width: 250px;
+  height: 350px;
+}
+
+.rap-flx-200 {
+  position: relative;
+  width: 250px;
+  height: 350px;
+}
+
+.step-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  /* padding: 0 10px; */
+  overflow-x: hidden;
+}
+
+/* .step-content::before,
+.step-content::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 3px;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  filter: blur(10px);
+  border-radius: 50%;
+}
+
+.step-content::before {
+  left: -10px;
+}
+
+.step-content::after {
+  right: -10px;
+} */
+
+.steps-dots {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+  background-color: var(--border-col);
+  border-radius: 50%;
+}
+
+.dot.active {
+  background-color: var(--icons-col);
+}
+
+.rap-step {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  text-align: center;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
+}
+
+.rap-step.exit-left {
+  animation: slideOutLeft 0.5s forwards; /* צעד יוצא שמאלה */
+}
+
+.rap-step.exit-right {
+  animation: slideOutRight 0.5s forwards; /* צעד יוצא ימינה */
+}
+
+.rap-step.enter-right {
+  animation: slideInRight 0.5s forwards; /* צעד נכנס מימין */
+}
+
+.rap-step.enter-left {
+  animation: slideInLeft 0.5s forwards; /* צעד נכנס משמאל */
+}
+
+@keyframes slideInRight {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutLeft {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes slideOutRight {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+.step {
+  direction: var(--ltr);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.step .prev,
+.step .next {
+  color: var(--border-col);
+  font-size: 2rem;
+}
+
+.prev.active,
+.next.active {
+  color: var(--icons-col);
+}
