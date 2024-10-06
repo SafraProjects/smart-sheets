@@ -3,8 +3,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from app.src.auto.auto_service import AutoUser
 from app.src.users.user_service import UserService
-from .src.users.user_controler import router as user_router
-from .src.application import Access
+from app.src.users.user_controler import router as user_router
+from app.src.application import Access
 
 
 # if "__main__" == __name__:

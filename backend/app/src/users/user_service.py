@@ -30,7 +30,6 @@ class UserService:
 
             user = UserDB.convert_baseuser_to_user(user_data, uuid4_id)
             user_dict = user.dict(by_alias=True)
-            print(user_dict)
 
             await db.insert_one(user_dict)
             return user
@@ -45,11 +44,9 @@ class UserService:
         credential_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                                              detail="Could not validate credentials", headers={"WWW-Authenticate": "Bearer"})
         try:
-            print(token)
             payload = jwt.decode(token, Access.get_access_key("super_admin"),
                                  algorithms=[Access.get_algorithm()])
             user_id: str = payload.get("user_id")
-            print(user_id)
             if user_id is None:
                 raise credential_exception
 

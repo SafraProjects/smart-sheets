@@ -7,7 +7,12 @@ from jose import jwt, JWTError
 from datetime import datetime, timedelta
 
 from ..enums import UserEnum
-from .auto_model import Token, TokenData, UserDB, UserSing
+from .auto_model import (
+    Token,
+    TokenData,
+    UserDB,
+    UserSing
+)
 from ..application import Access
 from ..DB import DBApplication
 
@@ -41,19 +46,13 @@ class AutoUser:
 
     @staticmethod
     def create_token(user_data: UserDB, expires_delta: timedelta = None) -> Token:
-
-        print(user_data)
-
         access_key = AutoUser.get_user_secret_key(user_data["user_type"])
-        print(access_key)
-
         expire = AutoUser.get_expire_delta(expires_delta)
         to_encode = {
             "user_id": user_data["_id"],
             "user_type": user_data["user_type"],
             "exp": expire
         }
-
         encoded_jwt = jwt.encode(to_encode, access_key,
                                  algorithm=Access.get_algorithm())
         return encoded_jwt
