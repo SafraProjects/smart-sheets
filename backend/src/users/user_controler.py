@@ -1,13 +1,13 @@
 from fastapi import Depends, HTTPException, status, APIRouter, Body
 from fastapi.security import OAuth2PasswordRequestForm
 
-from app.src.auto.auto_service import AutoUser
+from src.auto.auto_service import AutoUser
 # from ..auto.auto_controler import app2
 
-from ..application import Access
+from src.application import Access
 from .user_service import UserService
 from .user_model import BaseUser, UserSing, UserDB
-from ..auto import Token
+from src.auto import Token
 
 # from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 # auto2_schema = OAuth2PasswordBearer(tokenUrl="token")
