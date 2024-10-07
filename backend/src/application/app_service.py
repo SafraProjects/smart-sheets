@@ -7,8 +7,12 @@ load_dotenv()
 class Access():
     @staticmethod
     def get_access_key(user_type: str = "user") -> str:
-        user_access = "access_key" if user_type == "user" else "admin_access_key" if user_type == "admin" else "super_admin_access_key" if user_type == "super_admin" else "access_key"
-        return os.getenv(user_access)
+        user_access_key = user_type + "_access_key"
+        return os.getenv(user_access_key)
+
+    @staticmethod
+    def get_refresh_key() -> str:
+        return os.getenv("refresh_key")
 
     @staticmethod
     def get_algorithm() -> str:

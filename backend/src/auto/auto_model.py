@@ -15,12 +15,12 @@ class TokenData(BaseModel):
     expire: timedelta
 
 
-class UserSing(BaseModel):
+class UserLogIn(BaseModel):
     name: str
     password: str
 
 
-class BaseUser(UserSing):
+class UserSingUp(UserLogIn):
     email: EmailStr
 
 

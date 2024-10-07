@@ -1,3 +1,3 @@
-from .user_controler import *
-from .user_model import *
-from .user_service import *
+from .user import user_router
+# from .admin import
+# from .super_admin import

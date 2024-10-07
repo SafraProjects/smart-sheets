@@ -1,25 +1,40 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Header, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from .auto_model import Token
-from ..users.user_model import BaseUser
+
+from .auto_model import Token, UserSingUp
+from .auto_service import AutoService
+from src.models import UserLogIn
 
 
-app2 = APIRouter(prefix="/aaa")
+router = APIRouter(tags=["Auto"])
 
 
-# @app2("/token", response_model=Token)
-# async def login_for_access_token(user_data: BaseUser = Depends()):
-#     user = authenticate_user(db, form_data.username, form_data.password)
-#     if not user:
-#         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-#                             detail="Incorrect username or password", headers={"WWW-Authenticate": "Bearer"})
-#     access_token_expires = timedelta(minutes=Access.get_access_key())
-#     access_token = create_access_token(
-#         data={"sub": user.username}, expires_delta=access_token_expires)
-#     return {"access_token": access_token, "token_type": "bearer"}
+@router.post("/sing_up")
+async def sing_up(data: UserSingUp):
+    verification_data = await AutoService.create_user(data)
 
-# return "aaaa"
+    # await Email.send_email_verification(verification_data["Email"], verification_data["VerCode"])
 
-# @router.get("/users/me/", response_model=User)
-# async def read_users_me(current_user: User = Depends(get_current_active_user)):
-#     return current_user
+    return {"message": "User registered, please check your email to verify your account"}
+
+
+# @router.post("/log_in")
+# async def log_in(user_data: UserLogIn = Depends()) -> Token:
+#     token = await AutoService.sing_in(user_data=user_data)
+#     return {"access_token": token}
+
+
+@router.post("/log-in")
+async def login(form_data: UserLogIn = Depends()):
+    user = await AutoService.authenticate(form_data.username, form_data.password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+
+    token = AutoService.create_token(user)
+    return {"access_token": token, "token_type": "bearer"}
+
+
+@router.get("/verify-email/{verification_code}")
+async def verify_email(verification_code: str):
+    return AutoService.verify_token(verification_code)
