@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
-from ...enums import UserEnum
+from src.models import UserEnum
 
 
 class UserLogIn(BaseModel):

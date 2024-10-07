@@ -11,7 +11,6 @@ from src.models import (
 
 # >>> services
 from src.application import Access
-from src.dependencies import get_auto_user, get_user_service
 from src.users.user.user_service import UserService
 
 
