@@ -1,14 +1,14 @@
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
-from ..enums import UserEnum
+from src.models import UserEnum
 
 
-class UserSing(BaseModel):
+class UserLogIn(BaseModel):
     name: str
     password: str
 
 
-class BaseUser(UserSing):
+class UserSingUp(UserLogIn):
     email: EmailStr
 
 
@@ -20,14 +20,17 @@ class UserDB(BaseModel):
     user_type: UserEnum = UserEnum.super_admin.value
     active: bool = False
 
+    class Config:
+        use_enum_values = True
+
     @staticmethod
-    def convert_baseuser_to_user(base_user: BaseUser, user_id: str) -> "UserDB":
-        from ..auto import AutoUser
+    def convert_UserSingUp_to_user(base_user: UserSingUp, user_id: str) -> "UserDB":
+        from ...auto import AutoService
         print(user_id)
         return UserDB(
             _id=user_id,
             name=base_user.name,
             email=base_user.email,
-            hashed_password=AutoUser.get_hash_password(
+            hashed_password=AutoService.get_hash_password(
                 base_user.password)
         )

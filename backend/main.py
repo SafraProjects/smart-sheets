@@ -1,25 +1,14 @@
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
-from src.auto import AutoUser
-from src.users import UserService
-from src.users import router as user_router
-from src.application import Access
+# >>> routers
+from src.users import user_router
+from src.auto import auto_router
 
 
-# if "__main__" == __name__:
 app = FastAPI()
 
+app.include_router(auto_router, prefix="/auto",)
+app.include_router(user_router, prefix="/user",)
 
-@app.post("/token")
-async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = await UserService.authenticate(form_data.username, form_data.password)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
-
-    token = AutoUser.create_token(user)
-    return {"access_token": token, "token_type": "bearer"}
-
-
-app.include_router(user_router)
+# if "__main__" == __name__:

@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr, Field
 from datetime import timedelta
-from ..enums.enum_model import UserEnum
+from src.models import UserEnum
 from enum import Enum
 
 
@@ -15,12 +15,12 @@ class TokenData(BaseModel):
     expire: timedelta
 
 
-class UserSing(BaseModel):
+class UserLogIn(BaseModel):
     name: str
     password: str
 
 
-class BaseUser(UserSing):
+class UserSingUp(UserLogIn):
     email: EmailStr
 
 
