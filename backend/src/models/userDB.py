@@ -10,7 +10,7 @@ class UserDB(BaseModel):
     name: str
     email: EmailStr
     hashed_password: str
-    user_type: UserEnum = UserEnum.super_admin.value
+    user_type: UserEnum = UserEnum.user
     active: bool = False
 
     @staticmethod

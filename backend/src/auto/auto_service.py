@@ -1,6 +1,8 @@
-from fastapi import Depends, status, HTTPException
+from fastapi import Depends, status, HTTPException, Request, Response
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
+from functools import wraps
+
 
 from jose import jwt, JWTError
 from uuid import uuid4
@@ -41,11 +43,11 @@ class AutoService:
         return access_key
 
     @staticmethod
-    def get_expire_delta(expires_delta: timedelta = None):
+    def get_expire_delta(expires_delta: int = None):
         if expires_delta:
-            expire = datetime.utcnow() + timedelta(minutes=expires_delta)
+            expire = datetime.now() + timedelta(days=expires_delta)
         else:
-            expire = datetime.utcnow() + timedelta(minutes=Access.get_access_token_expire())
+            expire = datetime.now() + timedelta(days=Access.get_access_token_expire_days())
         print(expire)
         return expire
 
@@ -54,18 +56,41 @@ class AutoService:
         return pwd_context.verify(password, hash_password)
 
     @staticmethod
-    async def authenticate(user_name, password):
-        db = await DBApplication.get_users_db()
-        user = await db.find_one({"name": user_name})
-        if not user or user["active"] != False:
-            return False
-        if not AutoService.verify_password(password=password, hash_password=user["hashed_password"]):
-            return False
+    async def authenticate(
+        email: str,
+        password: str = None,
+        user_type: str = None,
+        db=None
+    ) -> UserDB:
+        try:
+            if not db:
+                db = await DBApplication.get_users_db()
+            user = await db.find_one({"email": email})
+            if not user:
+                raise HTTPException(
+                    status_code=404, detail="User not found")
+
+        except Exception as error:
+            print(f"\n\033[91m{str(error)}\033[0m")
+            raise HTTPException(
+                status_code=500, detail=f"An internal error occurred: {str(error)}")
+
+        if not user["active"]:
+            raise HTTPException(
+                status_code=400, detail=f"User is not active")
+
+        if user_type and user_type != user["user_type"]:
+            raise HTTPException(
+                status_code=401, detail=f"User type incorrect")
+
+        if password and not AutoService.verify_password(password=password, hash_password=user["hashed_password"]):
+            raise HTTPException(
+                status_code=400, detail="Incorrect password")
         return user
 
     @staticmethod
     async def create_user(user_data: UserSingUp) -> UserDB:
-        print(user_data)
+        print("\n\033[92mUser:\033[0m   ", user_data, "\n")
         db = await DBApplication.get_users_db()
 
         existing_user = await db.find_one({"email": user_data.email})
@@ -76,52 +101,104 @@ class AutoService:
             uuid = await AutoService.get_new_uuid(db)
             hash_pw = AutoService.get_hash_password(user_data.password)
 
-            verification_code = AutoService.create_verification_token()
             user_to_DB = UserDB.convert_base_user_to_userDB(
                 user_data, user_id=uuid, hash_pw=hash_pw)
+            verification_code = AutoService.create_verification_token(
+                user_email=user_to_DB.email)
 
             await db.insert_one(user_to_DB.dict(by_alias=True))
 
             return {"Email": user_to_DB.email, "VerCode": verification_code}
         except Exception as error:
-            print(error)
+            print("\n\033[91m" + error + "\033[0m")
             raise error
 
-    # @staticmethod
-    # async def sing_in(user_data: UserLogIn) -> Token:
-    #     user = await UserService.get_user_by_field("name", user_data.name)
-    #     return AutoService.create_token(UserDB(**user))
 
 # >>> Tokens
 
     @staticmethod
+    async def verify_refresh_token(refresh_token: str) -> UserDB:
+        try:
+            payload = jwt.decode(refresh_token, Access.get_refresh_key(), algorithms=[
+                                 Access.get_algorithm()])
+            db = await DBApplication.get_users_db()
+            user = await db.find_one({"_id": payload["user_id"]})
+            if not user:
+                raise HTTPException(
+                    status_code=401,
+                    detail="User not found"
+                )
+
+            return user
+        except JWTError:
+            raise HTTPException(
+                status_code=401, detail="Invalid or expired refresh token")
+
+    @staticmethod
+    def verify_access_token(token: str):
+        try:
+            payload = jwt.decode(token, Access.get_access_key(), algorithms=[
+                                 Access.get_algorithm()])
+            return payload
+        except JWTError:
+            raise HTTPException(
+                status_code=401, detail="Invalid or expired access token")
+
+    @staticmethod
+    async def verify_account(verify_token: str):
+        try:
+            payload = jwt.decode(verify_token, Access.get_verification_key(), algorithms=[
+                                 Access.get_algorithm()])
+            db = await DBApplication.get_users_db()
+            update_result = await db.update_one({"email": payload["email"]}, {"$set": {"active": True}})
+            if update_result.modified_count == 1:
+                return {"message": "User verified successfully"}
+            else:
+                raise HTTPException(
+                    status_code=400, detail="No user found with this email or user already active")
+
+        except JWTError:
+            payload = jwt.decode(
+                verify_token,
+                Access.get_verification_key(),
+                algorithms=[Access.get_algorithm()],
+                options={"verify_exp": False}
+            )
+            raise HTTPException(
+                status_code=401, detail={"error": "Invalid or expired token", "email": payload["email"]})
+
+        except Exception as e:
+            raise HTTPException(
+                status_code=500, detail=f"An error occurred: {str(e)}")
+
+    @staticmethod
     def create_verification_token(user_email: str) -> str:
-        expire = datetime.utcnow() + timedelta(hours=1)
+        expire = datetime.utcnow() + timedelta(minutes=30)
         to_encode = {"email": user_email, "exp": expire}
-        token = jwt.encode(to_encode, Access.get_access_key(),
+        token = jwt.encode(to_encode, Access.get_verification_key(),
                            algorithm=Access.get_algorithm())
         return token
 
-    @staticmethod
-    def create_token(user_data: UserDB, expires_delta: timedelta = None) -> Token:
-        access_key = AutoService.get_user_secret_key(user_data.user_type)
-        expire = AutoService.get_expire_delta(expires_delta)
-        print(user_data)
-        to_encode = {
-            "user_id": user_data.id,
-            "user_type": user_data.user_type,
-            "hash_pw": user_data.hashed_password,
-            "exp": expire
-        }
-        encoded_jwt = jwt.encode(to_encode, access_key,
-                                 algorithm=Access.get_algorithm())
-        return encoded_jwt
+    # @staticmethod
+    # def create_token(user_data: UserDB) -> Token:
+    #     access_key = AutoService.get_user_secret_key(user_data.user_type)
+    #     expire = AutoService.get_expire_delta()
+    #     print("\033[92mUser:\033[0m", user_data)
+    #     to_encode = {
+    #         "user_id": user_data.id,
+    #         "user_type": user_data.user_type,
+    #         "hash_pw": user_data.hashed_password,
+    #         "exp": expire
+    #     }
+    #     encoded_jwt = jwt.encode(to_encode, access_key,
+    #                              algorithm=Access.get_algorithm())
+    #     return encoded_jwt
 
     @staticmethod
     def create_access_token(user_data: UserDB):
         access_key = AutoService.get_user_secret_key(user_data.user_type)
         expire = AutoService.get_expire_delta()
-        print(user_data)
+        print("\033[92mUser:\033[0m", user_data)
         to_encode = {
             "user_id": user_data.id,
             "user_type": user_data.user_type,
@@ -135,8 +212,9 @@ class AutoService:
     @staticmethod
     def create_refresh_token(user_data: UserDB):
         access_key = AutoService.get_user_secret_key(user_data.user_type)
-        expire = AutoService.get_expire_delta()
-        print(user_data)
+        expire = AutoService.get_expire_delta(
+            Access.get_refresh_token_expire_days())
+        print("\033[92mUser:\033[0m", user_data)
         to_encode = {
             "user_id": user_data.id,
             "exp": expire
@@ -147,37 +225,41 @@ class AutoService:
 
     @staticmethod
     def refresh_access_token(refresh_token: str):
-        exception = HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token")
-        try:
-            payload = jwt.decode(refresh_token, Access.get_refresh_key(), algorithms=[
-                                 Access.get_algorithm()])
-            user_id = payload.get("user_id")
-            if user_id is None:
-                raise exception
+        user = AutoService.verify_refresh_token(refresh_token)
+        user_data = AutoService.authenticate(
+            user["email"], user_type=user["user_type"])
+        return AutoService.create_access_token(user_data=user_data)
 
-            user_data = AutoService.authenticate(user_id)
 
-            return AutoService.create_access_token(user_data=user_data)
-        except JWTError:
-            raise exception
+def check_tokens_and_refresh(func):
+    @wraps(func)
+    async def wrapper(request: Request, response: Response, *args, **kwargs):
 
-    @staticmethod
-    async def verify_token(token: str):
-        try:
-            payload = jwt.decode(token, Access.get_access_key(), algorithms=[
-                                 Access.get_algorithm()])
-            db = await DBApplication.get_users_db()
-            update_result = await db.update_one({"email": payload["email"]}, {"$set": {"active": True}})
-            if update_result.modified_count == 1:
-                return {"message": "User verified successfully"}
-            else:
-                raise HTTPException(
-                    status_code=400, detail="No user found with this email or user already active")
+        # request: Request = kwargs.get('request')
+        # response: Response = kwargs.get('response')
 
-        except JWTError:
-            raise HTTPException(
-                status_code=401, detail="Invalid or expired token")
-        except Exception as e:
-            raise HTTPException(
-                status_code=500, detail=f"An error occurred: {str(e)}")
+        # בדיקת טוקן גישה
+        access_token = request.cookies.get("access_token")
+        refresh_token = request.cookies.get("refresh_token")
+
+        if access_token:
+            payload = AutoService.verify_access_token(access_token)
+            if payload:
+                # אם הטוקן תקין, ממשיכים לפעולה
+                return await func(*args, **kwargs)
+
+        # אם טוקן הגישה לא קיים או פג תוקפו, ננסה לרענן את הטוקן
+        if refresh_token:
+            new_access_token = AutoService.refresh_access_token(refresh_token)
+            if new_access_token:
+                # שמירת טוקן גישה חדש בעוגיה
+                response.set_cookie(
+                    key="access_token", value=new_access_token, httponly=True, secure=True
+                )
+                return await func(*args, **kwargs)
+
+        # אם אין טוקן רענון תקין, החזרת שגיאה
+        raise HTTPException(
+            status_code=401, detail="Authentication required or tokens expired")
+
+    return wrapper
