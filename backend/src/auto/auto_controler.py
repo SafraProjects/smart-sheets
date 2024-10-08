@@ -5,7 +5,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from src.models import UserLogIn, Token, UserSingUp
 
 # >>> services
-from .auto_service import AutoService
+from .auto_service import AutoService, authenticate_login
 from services.email.email_service import EmailService
 from src.application import Access
 
@@ -63,12 +63,15 @@ async def verify_email(verification_code: str):
 
 
 @router.post("/log-in")
-async def login(response: Response, form_data: UserLogIn = Depends()):
+@authenticate_login
+async def login(request: Request, response: Response, form_data: UserLogIn = Depends()):
+
     user = await AutoService.authenticate(email=form_data.email, password=form_data.password)
+
     if not user:
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    access_token = AutoService.create_access_token(user)
+    access_token, user_type = AutoService.create_access_token(user)
     refresh_token = AutoService.create_refresh_token(user)
 
     response.set_cookie(key="access_token",

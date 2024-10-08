@@ -1,4 +1,5 @@
 from fastapi import Depends, status, HTTPException, Request, Response
+from fastapi.responses import RedirectResponse
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from functools import wraps
@@ -20,7 +21,7 @@ from src.models import (
 from ..application import Access
 from ..DB import DBApplication
 
-oauth2_schema = OAuth2PasswordBearer(tokenUrl="token")
+# oauth2_schema = OAuth2PasswordBearer(tokenUrl="token")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
@@ -86,7 +87,7 @@ class AutoService:
         if password and not AutoService.verify_password(password=password, hash_password=user["hashed_password"]):
             raise HTTPException(
                 status_code=400, detail="Incorrect password")
-        return user
+        return UserDB(**user)
 
     @staticmethod
     async def create_user(user_data: UserSingUp) -> UserDB:
@@ -195,7 +196,7 @@ class AutoService:
     #     return encoded_jwt
 
     @staticmethod
-    def create_access_token(user_data: UserDB):
+    def create_access_token(user_data: UserDB) -> tuple[Token, UserEnum]:
         access_key = AutoService.get_user_secret_key(user_data.user_type)
         expire = AutoService.get_expire_delta()
         print("\033[92mUser:\033[0m", user_data)
@@ -207,7 +208,7 @@ class AutoService:
         }
         encoded_jwt = jwt.encode(to_encode, access_key,
                                  algorithm=Access.get_algorithm())
-        return encoded_jwt
+        return encoded_jwt, user_data.user_type.value
 
     @staticmethod
     def create_refresh_token(user_data: UserDB):
@@ -231,35 +232,53 @@ class AutoService:
         return AutoService.create_access_token(user_data=user_data)
 
 
-def check_tokens_and_refresh(func):
+def authenticate_user(func):
     @wraps(func)
     async def wrapper(request: Request, response: Response, *args, **kwargs):
-
-        # request: Request = kwargs.get('request')
-        # response: Response = kwargs.get('response')
-
-        # בדיקת טוקן גישה
         access_token = request.cookies.get("access_token")
         refresh_token = request.cookies.get("refresh_token")
 
         if access_token:
             payload = AutoService.verify_access_token(access_token)
             if payload:
-                # אם הטוקן תקין, ממשיכים לפעולה
                 return await func(*args, **kwargs)
 
-        # אם טוקן הגישה לא קיים או פג תוקפו, ננסה לרענן את הטוקן
         if refresh_token:
             new_access_token = AutoService.refresh_access_token(refresh_token)
             if new_access_token:
-                # שמירת טוקן גישה חדש בעוגיה
                 response.set_cookie(
                     key="access_token", value=new_access_token, httponly=True, secure=True
                 )
                 return await func(*args, **kwargs)
 
-        # אם אין טוקן רענון תקין, החזרת שגיאה
         raise HTTPException(
             status_code=401, detail="Authentication required or tokens expired")
+
+    return wrapper
+
+
+def authenticate_login(func):
+    @wraps(func)
+    async def wrapper(request: Request, response: Response, *args, **kwargs):
+        access_token = request.cookies.get("access_token")
+        refresh_token = request.cookies.get("refresh_token")
+
+        if access_token:
+            payload = AutoService.verify_access_token(access_token)
+            if payload:
+                user_type = payload["user_type"]
+                return RedirectResponse(url=f"/{user_type}", status_code=302)
+
+        if refresh_token:
+            new_access_token, user_type = AutoService.refresh_access_token(
+                refresh_token)
+            if new_access_token:
+                response.set_cookie(
+                    key="access_token", value=new_access_token, httponly=True, secure=True
+                )
+                return RedirectResponse(url=f"/{user_type}", status_code=302)
+
+        # >>> go to log-in
+        return await func(request, response, *args, **kwargs)
 
     return wrapper

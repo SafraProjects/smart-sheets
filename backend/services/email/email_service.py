@@ -37,7 +37,7 @@ class EmailService:
         server.quit()
         return a
 
-    def _add_attachment(msg: EmailMessage, files: str or list = []):
+    def _add_attachment(msg: EmailMessage, files: str or list = []):  # type: ignore
         if isinstance(files, str):
             files = [files]
 
