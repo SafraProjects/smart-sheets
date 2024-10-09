@@ -4,6 +4,7 @@
   --focus-border-color: #000;
   --focus-label-color: var(--text-col);
   --button-bg-color: var(--back-btn-login-col);
+  --button-st-col: rgb(165, 165, 165);
   --border-rad: 5px;
 }
 
@@ -79,13 +80,18 @@
 }
 
 .input-area {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
   width: 100%;
+  height: 100%;
   padding: 20px;
 }
 
 .input-container {
   position: relative;
-  margin-top: 30px;
   width: 100%;
 }
 
@@ -143,12 +149,11 @@ input:focus {
 }
 
 button {
-  margin-top: 35px;
   width: 100%;
   padding: 5px;
   font-size: 1.2rem;
   color: #fff;
-  background-color: var(--login-bd-col);
+  background-color: var(--button-st-col);
   border: 2px solid rgb(255, 255, 255, 0);
   border-radius: var(--border-rad);
   cursor: pointer;
@@ -162,4 +167,37 @@ button {
 .submit:hover {
   filter: brightness(1.1);
   border: 2px solid var(--border-col);
+}
+
+/*  */
+.password-container {
+  position: relative;
+  width: fit-content;
+}
+
+.toggle-password-btn {
+  left: 10px;
+  right: auto;
+}
+
+:root[dir="ltr"] .toggle-password-btn {
+  left: auto;
+  right: 10px;
+}
+
+.toggle-password-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.8rem;
+  color: var(--icons-col);
+}
+
+.recreate-password {
+  font-size: 1rem;
+  color: var(--text-col);
+}
+
+.recreate-password:hover {
+  color: var(--icons-col);
 }

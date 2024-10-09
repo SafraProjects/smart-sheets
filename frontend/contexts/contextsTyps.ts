@@ -12,6 +12,7 @@ export type KeyLanguageWords =
   | "singUp"
   | "secondPasswordInputLabel"
   | "userNameInputLabel"
+  | "recreatePassword"
   | "login";
 
 export interface LanguageTextInterface {

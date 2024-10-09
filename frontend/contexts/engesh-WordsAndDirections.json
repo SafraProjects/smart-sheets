@@ -11,7 +11,8 @@
     "userNameInputLabel": "שם משתמש",
     "singUp": "הרשמה",
     "login": "התחברות",
-    "submit": "אימות"
+    "submit": "אימות",
+    "recreatePassword": "שכחתי את הסיסמא שלי"
   },
   "en": {
     "button": "To hebrew",
@@ -25,6 +26,7 @@
     "userNameInputLabel": "name",
     "login": "Log In",
     "singUp": "Sing Up",
-    "submit": "Confirm"
+    "submit": "Confirm",
+    "recreatePassword": "I forgot my password"
   }
 }

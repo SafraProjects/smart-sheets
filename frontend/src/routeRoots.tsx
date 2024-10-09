@@ -32,6 +32,11 @@ const router = createBrowserRouter([
         path: "/auto/log-in",
         element: <Login />,
       },
+      // need some adjustment for handel recreate user password with email verification
+      {
+        path: "/auto/recreate-password",
+        // element: <Login />,
+      },
     ],
   },
   {

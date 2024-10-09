@@ -1,10 +1,19 @@
 import React, { useState } from "react";
 import { useLanguage } from "../../../../contexts/languageContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 export const Login: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const { getText } = useLanguage();
+
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
+  };
+
+  const handelRecreatePassword = () => {};
 
   return (
     <div className="input-area">
@@ -25,7 +34,7 @@ export const Login: React.FC = () => {
 
       <div className="input-container">
         <input
-          type="password"
+          type={isPasswordVisible ? "text" : "password"}
           id="passwordInput"
           placeholder=" "
           minLength={6}
@@ -35,9 +44,23 @@ export const Login: React.FC = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <label htmlFor="passwordInput">{getText("passwordInputLabel")}</label>
-      </div>
 
+        <label htmlFor="passwordInput">{getText("passwordInputLabel")}</label>
+        <div
+          onMouseDown={togglePasswordVisibility}
+          onMouseUp={togglePasswordVisibility}
+          className="toggle-password-btn"
+        >
+          {isPasswordVisible ? (
+            <FontAwesomeIcon icon={faEye} />
+          ) : (
+            <FontAwesomeIcon icon={faEyeSlash} />
+          )}
+        </div>
+      </div>
+      <div className="recreate-password" onClick={handelRecreatePassword}>
+        {getText("recreatePassword")}
+      </div>
       <button
         className={!email || !password ? "" : "submit"}
         type="submit"
