@@ -16,7 +16,7 @@ router = APIRouter(tags=["Auto"])
 # >>> sing up
 
 
-@router.post("/sing_up")
+@router.post("/sing-up")
 async def sing_up(data: UserSingUp = Depends()):
     verification_data = await AutoService.create_user(data)
     url = Access.get_backend_port() + "/auto/verify-email/" + \
@@ -35,7 +35,7 @@ async def sing_up(data: UserSingUp = Depends()):
     return {"message": "User registered, please check your email to verify your account"}
 
 
-@router.post("/resend_verification_email/{user_email}")
+@router.post("/resend-verification-email/{user_email}")
 async def verify_email(user_email: str):
     token = AutoService.create_verification_token(
         user_email=user_email)

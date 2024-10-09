@@ -1,15 +1,32 @@
 export type Language = "he" | "en";
-export type KeyLanguageWords = "button" | "tableTitle" | "uploadedFile" | "createTable" | "tableFieldPlaceholder";
+
+export type KeyLanguageWords =
+  | "button"
+  | "tableTitle"
+  | "uploadedFile"
+  | "createTable"
+  | "tableFieldPlaceholder"
+  | "emailInputLabel"
+  | "passwordInputLabel"
+  | "submit"
+  | "singUp"
+  | "secondPasswordInputLabel"
+  | "userNameInputLabel"
+  | "login";
+
+export interface LanguageTextInterface {
+  he: {
+    [key in KeyLanguageWords]: string;
+  };
+  en: {
+    [key in KeyLanguageWords]: string;
+  };
+}
 
 export interface LanguageContextProps {
   language: Language;
   toggleLanguage: () => void;
   getText: (key: KeyLanguageWords) => string;
-}
-
-export interface languageTextInterface {
-  he: { [key in KeyLanguageWords]: string };
-  en: { [key in KeyLanguageWords]: string };
 }
 
 export interface LanguageProviderProps {

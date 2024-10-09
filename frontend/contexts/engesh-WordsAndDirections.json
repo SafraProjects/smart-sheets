@@ -4,13 +4,27 @@
     "tableTitle": "הוסף טבלה",
     "uploadedFile": "העלה קובץ",
     "createTable": "צור טבלה",
-    "tableFieldPlaceholder": "הוסף שדה"
+    "tableFieldPlaceholder": "הוסף שדה",
+    "emailInputLabel": "כתובת אימייל",
+    "passwordInputLabel": "סיסמה",
+    "secondPasswordInputLabel": "אימות סיסמה",
+    "userNameInputLabel": "שם משתמש",
+    "singUp": "הרשמה",
+    "login": "התחברות",
+    "submit": "אימות"
   },
   "en": {
-    "button": "to hebrew",
-    "tableTitle": "add table",
-    "uploadedFile": "uploaded file",
-    "createTable": "create table",
-    "tableFieldPlaceholder": "add field"
+    "button": "To hebrew",
+    "tableTitle": "Add table",
+    "uploadedFile": "Uploaded file",
+    "createTable": "Create table",
+    "tableFieldPlaceholder": "Add field",
+    "emailInputLabel": "Email",
+    "passwordInputLabel": "Password",
+    "secondPasswordInputLabel": "validate password",
+    "userNameInputLabel": "name",
+    "login": "Log In",
+    "singUp": "Sing Up",
+    "submit": "Confirm"
   }
 }

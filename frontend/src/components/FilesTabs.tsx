@@ -53,7 +53,7 @@ export const FilesTabs: React.FC = () => {
   // list of add file or create table steps for steps component
   const steps = [
     <>
-      <h2>{getText("tableTitle")}</h2>
+      <h2>{getText("tableTitle").toString()}</h2>
       <div
         onClick={() => setTableOptionSelected("upload file")}
         id="option"
@@ -61,7 +61,7 @@ export const FilesTabs: React.FC = () => {
           tableOptionSelected === "upload file" ? "selected" : ""
         }`}
       >
-        <h4>{getText("uploadedFile")}</h4>
+        <h4>{getText("uploadedFile").toString()}</h4>
         <div className="add-file-icon">
           <FontAwesomeIcon icon={faFileUpload}></FontAwesomeIcon>
         </div>
@@ -73,7 +73,7 @@ export const FilesTabs: React.FC = () => {
           tableOptionSelected === "create table" ? "selected" : ""
         }`}
       >
-        <h4>{getText("createTable")}</h4>
+        <h4>{getText("createTable").toString()}</h4>
         <div className="add-file-icon">
           <FontAwesomeIcon icon={faTableList}></FontAwesomeIcon>
         </div>

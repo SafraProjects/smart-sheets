@@ -1,0 +1,165 @@
+:root {
+  --login-bd-col: #f0f0f0;
+  --border-col: #ccc;
+  --focus-border-color: #000;
+  --focus-label-color: var(--text-col);
+  --button-bg-color: var(--back-btn-login-col);
+  --border-rad: 5px;
+}
+
+.log-back {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  background-color: var(--login-bd-col);
+}
+
+.from-user-login {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  height: 70vh;
+  width: 300px;
+
+  border: 2px solid var(--border-col);
+  border-radius: var(--border-rad);
+
+  background-color: var(--background-col);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+.from-header {
+  display: flex;
+  justify-content: center;
+
+  padding: 0 20px;
+  margin-bottom: 20px;
+
+  width: 100%;
+  height: 50px;
+
+  border-bottom: 2px solid var(--border-col);
+}
+
+.url-button {
+  text-align: center;
+  height: 100%;
+  width: 148px;
+
+  padding: 10px;
+
+  color: var(--text-col);
+}
+
+.url-button.active {
+  background-color: var(--login-bd-col);
+}
+
+.custom-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.custom-link:hover {
+  text-decoration: none;
+  color: inherit;
+}
+
+.first {
+  border-right: 2px solid var(--back-btn-login-col);
+  border-left: none;
+}
+
+:root[dir="rtl"] .first {
+  border-right: none;
+  border-left: 2px solid var(--back-btn-login-col);
+}
+
+.input-area {
+  width: 100%;
+  padding: 20px;
+}
+
+.input-container {
+  position: relative;
+  margin-top: 30px;
+  width: 100%;
+}
+
+input {
+  height: 35px;
+  width: 100%;
+  padding: 10px;
+  border: 2px solid var(--border-col);
+  border-radius: var(--border-rad);
+  background: none;
+  outline: none;
+  box-sizing: border-box;
+}
+
+label {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-55%);
+  transition: 0.3s ease all;
+  pointer-events: none;
+
+  font-size: 0.8rem;
+  color: var(--border-col);
+  background-color: var(--background-col);
+
+  border-radius: 5px;
+}
+
+/* מצב הפוקוס */
+input:focus ~ label,
+input:not(:placeholder-shown) ~ label {
+  top: 0;
+  font-size: 0.6rem;
+  color: var(--focus-label-color);
+  padding: 0 6px;
+}
+
+/* הכוונה דינמית */
+:root[dir="ltr"] label,
+:root[dir="ltr"] input:focus ~ label,
+:root[dir="ltr"] input:not(:placeholder-shown) ~ label {
+  left: 10px;
+  right: auto;
+}
+:root[dir="rtl"] label,
+:root[dir="rtl"] input:focus ~ label,
+:root[dir="rtl"] input:not(:placeholder-shown) ~ label {
+  right: 10px;
+  left: auto;
+}
+
+input:focus {
+  border-color: var(--focus-border-color);
+  background: none;
+}
+
+button {
+  margin-top: 35px;
+  width: 100%;
+  padding: 5px;
+  font-size: 1.2rem;
+  color: #fff;
+  background-color: var(--login-bd-col);
+  border: 2px solid rgb(255, 255, 255, 0);
+  border-radius: var(--border-rad);
+  cursor: pointer;
+  transition: filter 0.3s ease;
+}
+
+.submit {
+  background-color: var(--button-bg-color);
+}
+
+.submit:hover {
+  filter: brightness(1.1);
+  border: 2px solid var(--border-col);
+}

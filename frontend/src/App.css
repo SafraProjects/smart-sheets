@@ -10,12 +10,14 @@
   --elements-col: rgb(244, 244, 244);
   --buttons-col: ;
   --back-btn-col: rgba(255, 179, 0, 0.489);
+  --back-btn-login-col: rgb(255, 179, 0);
   --icons-col: rgb(162, 154, 255);
   --border-col: rgb(200, 200, 200);
   --text-col: rgb(38, 14, 99);
 
   --file-area-col: rgb(235, 235, 235);
   --white-col: white;
+  --login-bd-col: rgb(255, 249, 240);
 
   /* else */
   --border-rad: 10px;

@@ -43,8 +43,8 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({
     localStorage.setItem("appLanguage", newLanguage);
   };
 
-  const getText = (key: KeyLanguageWords) => {
-    return texts[language]?.[key] || key;
+  const getText = (key: KeyLanguageWords): string => {
+    return texts[language][key] || key;
   };
 
   return (

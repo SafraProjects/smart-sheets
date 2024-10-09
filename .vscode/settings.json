@@ -5,5 +5,8 @@
     "prettier.printWidth": 120
   },
   "editor.formatOnSave": true,
-  "cSpell.words": ["Kivun"]
+  "cSpell.words": ["Kivun"],
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.autopep8"
+  }
 }
