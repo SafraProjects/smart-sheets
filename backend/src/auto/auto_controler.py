@@ -64,7 +64,7 @@ async def verify_email(verification_code: str):
 
 
 @router.post("/log-in")
-@authenticate_login
+# @authenticate_login
 async def login(request: Request, response: Response, form_data: UserLogIn):
     print("aca")
     user = await AutoService.authenticate(email=form_data.email, password=form_data.password)
@@ -72,7 +72,7 @@ async def login(request: Request, response: Response, form_data: UserLogIn):
     if not user:
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    access_token, user_type = AutoService.create_access_token(user)
+    access_token = AutoService.create_access_token(user)
     refresh_token = AutoService.create_refresh_token(user)
 
     response.set_cookie(key="access_token",

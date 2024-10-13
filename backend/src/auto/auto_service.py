@@ -39,11 +39,6 @@ class AutoService:
         return uuid4_id
 
     @staticmethod
-    def get_user_secret_key(user_type: UserEnum) -> str:
-        access_key = Env.get_access_key(user_type)
-        return access_key
-
-    @staticmethod
     def get_expire_delta(expires_delta: int = None):
         if expires_delta:
             expire = datetime.now() + timedelta(days=expires_delta)
@@ -128,6 +123,7 @@ class AutoService:
 
 # >>> Tokens
 
+
     @staticmethod
     def verify_refresh_token(refresh_token: str):
         try:
@@ -182,24 +178,9 @@ class AutoService:
                            algorithm=Env.get_algorithm())
         return token
 
-    # @staticmethod
-    # def create_token(user_data: UserDB) -> Token:
-    #     access_key = AutoService.get_user_secret_key(user_data.user_type)
-    #     expire = AutoService.get_expire_delta()
-    #     print("\033[92mUser:\033[0m", user_data)
-    #     to_encode = {
-    #         "user_id": user_data.id,
-    #         "user_type": user_data.user_type,
-    #         "hash_pw": user_data.hashed_password,
-    #         "exp": expire
-    #     }
-    #     encoded_jwt = jwt.encode(to_encode, access_key,
-    #                              algorithm=Env.get_algorithm())
-    #     return encoded_jwt
-
     @staticmethod
     def create_access_token(user_data: UserDB) -> str:
-        access_key = AutoService.get_user_secret_key()
+        access_key = Env.get_access_key()
         expire = AutoService.get_expire_delta()
         print("\033[92mUser:\033[0m", user_data)
         to_encode = {
@@ -214,7 +195,7 @@ class AutoService:
 
     @staticmethod
     def create_refresh_token(user_data: UserDB):
-        access_key = AutoService.get_user_secret_key()
+        access_key = Env.get_access_key()
         expire = AutoService.get_expire_delta(
             Env.get_refresh_token_expire_days())
         print("\033[92mUser:\033[0m", user_data)
