@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import { useLanguage } from "../../../../contexts/languageContext";
 import { UserSignInDto } from "../../../../interface/user.dtos";
-import { singIn } from "../../../API/axios/axiosCenteral";
+import { singUp } from "../../../API/axios/axiosCenteral";
 import { useNavigate } from "react-router-dom";
 import validateEmail from "../../../utils/validetEmail";
 import { Alert } from "../../../../modules/alert/Alert";
@@ -72,7 +72,7 @@ export const SingUp: React.FC = () => {
 
     try {
       setIsLoding(true);
-      const a = await singIn(userToDb);
+      const a = await singUp(userToDb);
       console.log("message: ", a.message);
     } catch (error) {
       console.error("Error during sign up:", error);

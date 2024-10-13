@@ -129,7 +129,7 @@ class AutoService:
 # >>> Tokens
 
     @staticmethod
-    async def verify_refresh_token(refresh_token: str) -> UserDB:
+    def verify_refresh_token(refresh_token: str):
         try:
             payload = jwt.decode(refresh_token, Env.get_refresh_key(), algorithms=[
                                  Env.get_algorithm()])
@@ -139,7 +139,7 @@ class AutoService:
                 status_code=401, detail="Invalid or expired refresh token")
 
     @staticmethod
-    def verify_access_token(token: str, user_type: str = "user") -> dict[str, any]:
+    def verify_access_token(token: str, user_type: str = "user"):
         try:
             payload = jwt.decode(token, Env.get_access_key(user_type=user_type), algorithms=[
                                  Env.get_algorithm()])
@@ -153,7 +153,6 @@ class AutoService:
             payload = jwt.decode(verify_token, Env.get_verification_key(), algorithms=[
                                  Env.get_algorithm()])
             db = await DBApplication.get_users_db()
-            print(">>>>>> B")
             update_result = await db.update_one({"email": payload["email"]}, {"$set": {"active": True}})
             if update_result.modified_count == 1:
                 return {"message": "User verified successfully"}
@@ -241,8 +240,8 @@ def authenticate_user(func):
 
         if refresh_token:
             payload = AutoService.verify_refresh_token(refresh_token)
-            user = AutoService.get_user_by_field(
-                field="_id", value=payload["_id"])
+            user = await AutoService.get_user_by_field(
+                field="_id", value=payload["user_id"])
             new_access_token = AutoService.create_access_token(user_data=user)
 
             if new_access_token:
@@ -267,16 +266,18 @@ def authenticate_login(func):
             payload = AutoService.verify_access_token(
                 token=access_token,)
             if payload:
-                user = AutoService.get_user_by_field(
-                    field="_id", value=payload["_id"])
-                return {"user_data": user}
+                print(payload)
+                user = await AutoService.get_user_by_field(
+                    field="_id", value=payload["user_id"])
+                return user
 
         if refresh_token:
             try:
                 payload = AutoService.verify_refresh_token(refresh_token)
                 if payload:
+                    print(payload)
                     user = AutoService.get_user_by_field(
-                        field="_id", value=payload["_id"])
+                        field="_id", value=payload["user_id"])
                     new_access_token = AutoService.create_access_token(
                         user_data=user)
                     if new_access_token:

@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../../API/axios/axiosCenteral";
-import { UserLogin } from "../../../../interface/user.dtos";
+import { UserDBDto, UserLogin } from "../../../../interface/user.dtos";
 
 export const Login: React.FC = () => {
   const [email, setEmail] = useState<string>("");
@@ -30,10 +30,10 @@ export const Login: React.FC = () => {
     try {
       // console.log(userToDb);
       setIsloding(true);
-      const a = await login(userToDb);
+      const user: UserDBDto = await login(userToDb);
 
       nav("/user");
-      console.log("message", a);
+      console.log("user data:  ", user);
 
       throw new Error("Unexpected response structure");
     } catch (error) {
