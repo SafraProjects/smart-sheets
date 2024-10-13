@@ -12,6 +12,7 @@ interface AlertProp {
   isOpen: boolean;
   type?: "error" | "info" | "success" | "warning";
   position?: "top" | "bottom" | "left" | "right";
+  mainMessage?: string;
   message: string;
   func?: () => void;
   funcMessage?: string;
@@ -21,6 +22,7 @@ export const Alert: React.FC<AlertProp> = ({
   isOpen = false,
   type = "info",
   position = "top",
+  mainMessage,
   message = "write a message",
   func,
   funcMessage,
@@ -41,6 +43,9 @@ export const Alert: React.FC<AlertProp> = ({
               : faExclamationTriangle
           }
         />
+        {mainMessage && (
+          <span className="alert-main-message">{mainMessage}</span>
+        )}
         <span className="alert-message">{message}</span>
       </div>
       {func && funcMessage && (

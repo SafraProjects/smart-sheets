@@ -7,7 +7,6 @@ import { singUp } from "../../../API/axios/axiosCenteral";
 import { useNavigate } from "react-router-dom";
 import validateEmail from "../../../utils/validetEmail";
 import { Alert } from "../../../../modules/alert/Alert";
-import { Alerts } from "../../../../modules/alert/alerts";
 
 export const SingUp: React.FC = () => {
   const [name, setName] = useState<string>("");
@@ -198,6 +197,7 @@ export const SingUp: React.FC = () => {
         type="error"
         func={handelEmailFixed}
         funcMessage="אשר"
+        mainMessage={formState.email}
         message={formState.emailMessage}
       />
       <Alert
