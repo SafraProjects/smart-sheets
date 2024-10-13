@@ -1,12 +1,12 @@
-import { faEye, faEyeSlash, faL } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../../../../contexts/languageContext";
 import { UserSignInDto } from "../../../../interface/user.dtos";
-import { singUp } from "../../../API/axios/axiosCenteral";
-import { useNavigate } from "react-router-dom";
-import validateEmail from "../../../utils/validetEmail";
 import { Alert } from "../../../../modules/alert/Alert";
+import { singUp } from "../../../API/axios/axiosCenteral";
+import validateEmail from "../../../utils/validetEmail";
 
 export const SingUp: React.FC = () => {
   const [name, setName] = useState<string>("");
