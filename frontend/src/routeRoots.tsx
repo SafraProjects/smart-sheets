@@ -6,6 +6,8 @@ import { UserPage } from "./pages/users/userPage";
 import { Auto } from "./pages/Access/Auto";
 import { Login } from "./pages/Access/login/Login";
 import { SingUp } from "./pages/Access/singUp/SingUp";
+import { VerifyEmail } from "./pages/Access/verification/verifyEmail";
+
 // import { Navigate, Route, Routes } from "react-router-dom";
 // import TableFieldInput from "./components/FieldInput";
 // import FileUpload from "./components/uploadFile";
@@ -22,7 +24,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/auto",
-    element: <Auto url={null} />,
+    element: <Auto />,
     children: [
       {
         path: "/auto/sing-up",
@@ -40,8 +42,8 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/auto/verify-email",
-    element: <Auto url={"verify-email"} />,
+    path: "/auto/verify-email/:value",
+    element: <VerifyEmail />,
   },
 ]);
 

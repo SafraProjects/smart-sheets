@@ -123,13 +123,13 @@ export const FilesTabs: React.FC = () => {
           <span>{tab.name}</span>
         </div>
       ))}
-      <button
+      <div
         className="btn-add-file"
         onClick={() => handleOpen()}
         title="הוספת קובץ"
       >
         <FontAwesomeIcon icon={faPlus} />
-      </button>
+      </div>
 
       <Modal isOpen={isOpen} onClose={handleClose}>
         <Steps

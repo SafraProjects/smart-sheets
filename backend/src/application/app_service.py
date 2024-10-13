@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-class Access():
+class Env():
     @staticmethod
     def get_access_key(user_type: str = "user") -> str:
         user_access_key = user_type + "_access_key"
@@ -39,6 +39,10 @@ class Access():
     @staticmethod
     def get_backend_port() -> str:
         return os.getenv("backend_port")
+
+    @staticmethod
+    def get_frontend_port() -> str:
+        return os.getenv("frontend_port")
 
     @staticmethod
     def get_app_gmail_password() -> str:

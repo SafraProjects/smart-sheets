@@ -5,8 +5,9 @@
     "prettier.printWidth": 120
   },
   "editor.formatOnSave": true,
-  "cSpell.words": ["Kivun"],
+  "cSpell.words": ["Kivun", "mailcheck"],
   "[python]": {
     "editor.defaultFormatter": "ms-python.autopep8"
   }
+  // "python.analysis.typeCheckingMode": "basic"
 }

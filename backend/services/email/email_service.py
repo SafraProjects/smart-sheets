@@ -1,7 +1,7 @@
 import os
 import smtplib
 from email.message import EmailMessage
-from src.application.app_service import Access
+from src.application.app_service import Env
 from pydantic import EmailStr
 
 
@@ -11,7 +11,7 @@ class EmailService:
         sender_email: EmailStr = "daivid.aba@gmail.com",
         receiver_email: EmailStr = "a100200303@gmail.com",
         smtp_server: str = "smtp.gmail.com",
-        smtp_password: str = Access.get_app_gmail_password(),
+        smtp_password: str = Env.get_app_gmail_password(),
         smtp_port: int = 465,
         subject: str = "אימות אימייל - Tabio",
         body: str = "this is a test message",

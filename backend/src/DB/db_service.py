@@ -1,5 +1,5 @@
 from motor.motor_asyncio import AsyncIOMotorClient
-from ..application.app_service import Access
+from ..application.app_service import Env
 
 
 class DBApplication:
@@ -10,7 +10,7 @@ class DBApplication:
         if DBApplication._client is None:
             try:
                 DBApplication._client = AsyncIOMotorClient(
-                    Access.get_DB_port())
+                    Env.get_DB_port())
             except Exception as error:
                 print(error)
                 raise error

@@ -1,0 +1,91 @@
+.alert-container {
+  display: flex;
+  gap: 4px;
+  position: fixed;
+}
+
+.alert {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 15px;
+  border-radius: var(--border-rad);
+  font-size: 1rem;
+}
+
+.button-alert {
+  border-radius: var(--border-rad);
+  padding: 4px 10px;
+  margin-left: 15px;
+  cursor: pointer;
+  position: relative;
+}
+
+/* צבעים עבור הכפתור בהתאם לאלרט */
+.alert.error,
+.alert.error + .button-alert {
+  background-color: #ffcccc;
+  border: 2px solid #ff0000;
+  color: #ff0000;
+}
+
+.alert.info,
+.alert.info + .button-alert {
+  background-color: #cce5ff;
+  border: 2px solid #007bff;
+  color: #007bff;
+}
+
+.alert.success,
+.alert.success + .button-alert {
+  background-color: #d4edda;
+  border: 2px solid #28a745;
+  color: #28a745;
+}
+
+.alert.warning,
+.alert.warning + .button-alert {
+  background-color: #ffeeba;
+  border: 2px solid #ffc107;
+  color: #ffc107;
+}
+
+.alert-container.top {
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.alert-container.bottom {
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.alert-container.left {
+  top: 50%;
+  left: 20px;
+  transform: translateY(-50%);
+}
+
+.alert-container.right {
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+}
+
+.alert-message {
+  margin-left: 10px; /* המרווח בין האייקון להודעה */
+  color: var(--text-col);
+}
+
+.button-alert {
+  display: flex;
+  border-radius: var(--border-rad);
+  padding: 10px;
+  cursor: pointer;
+}
+
+.button-alert:hover {
+  filter: brightness(1.3);
+}

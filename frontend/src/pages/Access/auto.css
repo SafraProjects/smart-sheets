@@ -21,9 +21,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-between;
 
-  height: 70vh;
-  width: 300px;
+  height: 500px;
+  width: 350px;
 
   border: 2px solid var(--border-col);
   border-radius: var(--border-rad);
@@ -48,7 +49,7 @@
 .url-button {
   text-align: center;
   height: 100%;
-  width: 148px;
+  width: 173px;
 
   padding: 10px;
 
@@ -79,15 +80,24 @@
   border-left: 2px solid var(--back-btn-login-col);
 }
 
-.input-area {
+.from {
+  height: 80%;
+  width: 100%;
+}
+form {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
   gap: 10px;
+  padding: 40px;
+  height: 100%;
+  width: 100%;
+}
+
+.input-area {
   width: 100%;
   height: 100%;
-  padding: 20px;
 }
 
 .input-container {
@@ -123,10 +133,10 @@ label {
 /* מצב הפוקוס */
 input:focus ~ label,
 input:not(:placeholder-shown) ~ label {
-  top: 0;
+  top: 2px;
   font-size: 0.6rem;
   color: var(--focus-label-color);
-  padding: 0 6px;
+  padding: 2px 6px;
 }
 
 /* הכוונה דינמית */
@@ -148,10 +158,10 @@ input:focus {
   background: none;
 }
 
-button {
+.btn-submit {
   width: 100%;
   padding: 5px;
-  font-size: 1.2rem;
+  font-size: 0.9rem;
   color: #fff;
   background-color: var(--button-st-col);
   border: 2px solid rgb(255, 255, 255, 0);
@@ -162,6 +172,10 @@ button {
 
 .submit {
   background-color: var(--button-bg-color);
+}
+
+.un-valid {
+  border-color: red;
 }
 
 .submit:hover {
@@ -200,4 +214,22 @@ button {
 
 .recreate-password:hover {
   color: var(--icons-col);
+}
+
+.loader {
+  border-radius: 50%;
+  border-top: 3px solid #3498db;
+  width: 60px;
+  height: 60px;
+  animation: spin 2s linear infinite;
+  margin: auto;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

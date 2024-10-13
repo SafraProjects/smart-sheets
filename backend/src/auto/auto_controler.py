@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Header, HTTPException, status, Request, Response
+from fastapi import APIRouter, Body, Depends, Header, HTTPException, status, Request, Response
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 # >>> models
@@ -7,7 +7,7 @@ from src.models import UserLogIn, Token, UserSingUp
 # >>> services
 from .auto_service import AutoService, authenticate_login
 from services.email.email_service import EmailService
-from src.application import Access
+from src.application import Env
 
 
 router = APIRouter(tags=["Auto"])
@@ -16,22 +16,23 @@ router = APIRouter(tags=["Auto"])
 # >>> sing up
 
 
-@router.post("/sing-up")
-async def sing_up(data: UserSingUp = Depends()):
+@router.post("/sign-in")
+async def sing_up(data: UserSingUp):
     verification_data = await AutoService.create_user(data)
-    url = Access.get_backend_port() + "/auto/verify-email/" + \
+    url = Env.get_frontend_port() + "/auto/verify-email/" + \
         verification_data["VerCode"]
 
     EmailService.send_email(
         receiver_email=verification_data["Email"],
         body=[
-            "ברוך הבא לאתר Tabio",
+            data.name + " ברוך הבא לאתר Tabio",
             "",
             "האתר שבו תוכל למנף קבצי רשומות לנקסט לבל :)",
             "לפני שמתחילים..."
         ],
         link=url
     )
+    print("\n\033[92m email send :\033[0m")
     return {"message": "User registered, please check your email to verify your account"}
 
 
@@ -40,7 +41,7 @@ async def verify_email(user_email: str):
     token = AutoService.create_verification_token(
         user_email=user_email)
 
-    url = Access.get_backend_port() + "/auto/verify-email/" + token
+    url = Env.get_frontend_port() + "/auto/verify-email/" + token
     EmailService.send_email(
         receiver_email=user_email,
         body=[
@@ -53,7 +54,7 @@ async def verify_email(user_email: str):
     return {"message": "User registered, please check your email to verify your account"}
 
 
-@router.get("/verify-email/{verification_code}")
+@router.post("/verify-email/{verification_code}")
 async def verify_email(verification_code: str):
     print(verification_code)
     return await AutoService.verify_account(verification_code)
@@ -64,8 +65,8 @@ async def verify_email(verification_code: str):
 
 @router.post("/log-in")
 @authenticate_login
-async def login(request: Request, response: Response, form_data: UserLogIn = Depends()):
-
+async def login(request: Request, response: Response, form_data: UserLogIn):
+    print("aca")
     user = await AutoService.authenticate(email=form_data.email, password=form_data.password)
 
     if not user:
@@ -79,39 +80,10 @@ async def login(request: Request, response: Response, form_data: UserLogIn = Dep
     response.set_cookie(key="refresh_token",
                         value=refresh_token, httponly=True, secure=True)
 
-    return {"message": "Login successful"}
+    return {"user": user, "access_token": access_token, "refresh_token": refresh_token}
 
 
-# @router.post("/refresh-token")
-# async def refresh_token(request: Request, response: Response):
-#     refresh_token = request.cookies.get("refresh_token")
-#     if not refresh_token:
-#         raise HTTPException(
-#             status_code=403, detail="No refresh token available")
-
-#     new_access_token = AutoService.verify_refresh_token(refresh_token)
-#     if not new_access_token:
-#         raise HTTPException(
-#             status_code=403, detail="Invalid or expired refresh token")
-
-#     response.set_cookie(key="access_token",
-#                         value=new_access_token, httponly=True, secure=True)
-
-#     return {"message": "Token refreshed"}
-
-
-# @router.get("/auto-login")
-# async def auto_login(request: Request):
-#     access_token = request.cookies.get("access_token")
-#     refresh_token = request.cookies.get("refresh_token")
-
-#     if access_token:
-#         payload = AutoService.verify_access_token(access_token)
-#         if payload:
-#             return {"message": "User is already logged in"}
-
-#     if refresh_token:
-#         new_access_token = AutoService.refresh_access_token(refresh_token)
-#         return {"access_token": new_access_token, "message": "Auto login successful"}
-
-#     raise HTTPException(status_code=401, detail="Login required")
+@router.get("/auto-login")
+@authenticate_login
+async def auto_login():
+    raise HTTPException(status_code=401, detail="Login required")
