@@ -5,7 +5,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 # >>> routers
 from src.users import user_router
 from src.auto import auto_router
-import src.application.app_service as App
+import services.application.app_service as App
 
 
 app = FastAPI()

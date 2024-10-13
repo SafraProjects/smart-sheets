@@ -18,7 +18,7 @@ from src.models import (
     UserEnum
 )
 
-from ..application import Env
+from services.application import Env
 from ..DB import DBApplication
 
 # oauth2_schema = OAuth2PasswordBearer(tokenUrl="token")

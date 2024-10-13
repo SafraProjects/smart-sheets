@@ -1,5 +1,5 @@
 from motor.motor_asyncio import AsyncIOMotorClient
-from ..application.app_service import Env
+from services.application.app_service import Env
 
 
 class DBApplication:

@@ -1,7 +1,7 @@
 import os
 import smtplib
 from email.message import EmailMessage
-from src.application.app_service import Env
+from services.application.app_service import Env
 from pydantic import EmailStr
 
 

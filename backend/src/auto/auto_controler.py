@@ -7,7 +7,7 @@ from src.models import UserLogIn, Token, UserSingUp
 # >>> services
 from .auto_service import AutoService, authenticate_login
 from services.email.email_service import EmailService
-from src.application import Env
+from services.application import Env
 
 
 router = APIRouter(tags=["Auto"])
