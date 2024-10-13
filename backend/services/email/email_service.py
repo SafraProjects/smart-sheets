@@ -43,7 +43,8 @@ class EmailService:
 
         for file in files:
             try:
-                file_path = os.path.join(os.path.dirname(__file__), file)
+                file_path = os.path.join(os.path.dirname(
+                    __file__), "..", "..", "assets", file)
                 with open(file_path, 'rb') as f:
                     file_data = f.read()
                     file_name = f.name
