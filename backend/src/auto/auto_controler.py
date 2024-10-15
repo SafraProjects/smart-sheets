@@ -13,14 +13,14 @@ from services.application import Env
 router = APIRouter(tags=["Auto"])
 
 
-# >>> sing up
+# >>> sing in
 
 
 @router.post("/sign-in")
 async def sing_up(data: UserSingUp):
     verification_data = await AutoService.create_user(data)
-    url = Env.get_frontend_port() + "/auto/verify-email/" + \
-        verification_data["VerCode"]
+    url = Env.get_frontend_port() + "/auto/verify/" + \
+        verification_data["VerCode"] + "/" + verification_data["Email"]
 
     EmailService.send_email(
         receiver_email=verification_data["Email"],
@@ -41,7 +41,7 @@ async def verify_email(user_email: str):
     token = AutoService.create_verification_token(
         user_email=user_email)
 
-    url = Env.get_frontend_port() + "/auto/verify-email/" + token
+    url = Env.get_frontend_port() + "/auto/verify/" + token
     EmailService.send_email(
         receiver_email=user_email,
         body=[
@@ -60,11 +60,35 @@ async def verify_email(verification_code: str):
     return await AutoService.verify_account(verification_code)
 
 
+@router.post("/send-verification-password/{user_email}")
+async def verify_email(user_email: str):
+    code = AutoService.generate_code(4)
+    message = await AutoService.set_verification_password(user_email=user_email, code=str(code))
+    EmailService.send_email(
+        receiver_email=user_email,
+        body=[
+            "ברוך שובך לאתר Tabio",
+            "",
+            "קוד האימות שלך הוא: <b>" + str(code) + "</b>"
+        ],
+    )
+    return {"message": "User registered, please check your email to verify your account, " + message["message"]}
+
+
+@router.post("/verify-password/{user_email}/{verification_code}")
+async def verify_temp_password(user_email: str, verification_code: str):
+    return await AutoService.verify_temp_password(user_email=user_email, code=verification_code)
+
+
+@router.post("/update-password/{user_email}/{new_password}")
+async def update_password(user_email: str, new_password: str):
+    return await AutoService.update_user_password(user_email=user_email, code=new_password)
+
 # >>> Login
 
 
 @router.post("/log-in")
-# @authenticate_login
+@authenticate_login
 async def login(request: Request, response: Response, form_data: UserLogIn):
     print("aca")
     user = await AutoService.authenticate(email=form_data.email, password=form_data.password)
@@ -80,7 +104,7 @@ async def login(request: Request, response: Response, form_data: UserLogIn):
     response.set_cookie(key="refresh_token",
                         value=refresh_token, httponly=True, secure=True)
 
-    return {"user": user, "access_token": access_token, "refresh_token": refresh_token}
+    return user
 
 
 @router.get("/auto-login")

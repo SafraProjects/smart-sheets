@@ -13,7 +13,9 @@ export type KeyLanguageWords =
   | "secondPasswordInputLabel"
   | "userNameInputLabel"
   | "recreatePassword"
-  | "login";
+  | "login"
+  | "createAccount"
+  | "passwordsDoNotMatch";
 
 export interface LanguageTextInterface {
   he: {

@@ -4,18 +4,20 @@
   position: fixed;
 }
 
+.alert,
+.button-alert {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
 .alert {
   display: flex;
   align-items: center;
   gap: 7px;
-  padding: 10px 15px;
+  padding: 20px 15px;
   border-radius: var(--border-rad);
-  font-size: 1rem;
+  font-size: 1.4rem;
   border: 2px solid var(--border-col);
   background-color: var(--background-col);
-}
-
-.button-alert {
 }
 
 .button-alert {
@@ -25,8 +27,8 @@
   align-items: center;
 
   /* keep in mind that the hight of the button needs to be like the message */
-  padding: 10px;
-  margin-left: 15px;
+  padding: 20px;
+  margin: 0 5px;
 
   background-color: var(--background-col);
 
@@ -37,7 +39,7 @@
 }
 
 .button-alert:hover {
-  filter: brightness(1.1);
+  filter: brightness(0.94);
 }
 
 /* צבעים עבור הכפתור בהתאם לאלרט */
@@ -73,6 +75,72 @@
   top: 20px;
   left: 50%;
   transform: translateX(-50%);
+  animation: slideDown 0.5s ease-out forwards;
+}
+
+.alert-container.bottom {
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: slideUp 0.5s ease-out forwards;
+}
+
+.alert-container.left {
+  top: 80%;
+  left: 20px;
+  transform: translateY(-50%);
+  animation: slideLeft 0.5s ease-out forwards;
+}
+
+.alert-container.right {
+  top: 80%;
+  right: 20px;
+  transform: translateY(-50%);
+  animation: slideRight 0.5s ease-out forwards;
+}
+
+@keyframes slideDown {
+  0% {
+    transform: translate(-50%, -100%);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  0% {
+    transform: translate(-50%, 100);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-50%, -50%);
+    opacity: 1;
+  }
+}
+
+@keyframes slideLeft {
+  0% {
+    transform: translate(-100%, -50%);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(0, -50%);
+    opacity: 1;
+  }
+}
+
+@keyframes slideRight {
+  0% {
+    transform: translate(100%, -50%);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(0, -50%);
+    opacity: 1;
+  }
 }
 
 .alert-container.bottom {
@@ -81,24 +149,27 @@
   transform: translateX(-50%);
 }
 
-.alert-container.left {
-  top: 50%;
-  left: 20px;
-  transform: translateY(-50%);
-}
-
-.alert-container.right {
-  top: 50%;
-  right: 20px;
-  transform: translateY(-50%);
-}
-
 .alert-message,
 .alert-main-message {
-  margin-left: 10px; /* המרווח בין האייקון להודעה */
+  font-size: 1rem;
+  margin-left: 10px;
   color: var(--text-col);
 }
 
 .alert-main-message {
   font-weight: bold;
+}
+
+.close-alert {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30px;
+  width: 30px;
+  font-size: 1.2rem;
+}
+
+.close-alert:hover {
+  background-color: var(--border-col);
+  border-radius: 50%;
 }

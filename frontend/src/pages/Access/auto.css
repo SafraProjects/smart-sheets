@@ -23,10 +23,10 @@
   align-items: center;
   justify-content: space-between;
 
-  height: 500px;
-  width: 350px;
+  height: 550px;
+  width: 400px;
 
-  border: 2px solid var(--border-col);
+  /* border: 2px solid var(--border-col); */
   border-radius: var(--border-rad);
 
   background-color: var(--background-col);
@@ -42,24 +42,27 @@
 
   width: 100%;
   height: 50px;
-
-  border-bottom: 2px solid var(--border-col);
+  border-radius: var(--border-rad);
+  /* border-bottom: 2px solid var(--border-col); */
 }
 
 .url-button {
   text-align: center;
   height: 100%;
-  width: 173px;
+  width: 200px;
 
   padding: 10px;
 
   color: var(--text-col);
-}
-
-.url-button.active {
   background-color: var(--login-bd-col);
 }
 
+.url-button.active {
+  background-color: var(--background-col);
+}
+.un-active:hover {
+  filter: brightness(0.9);
+}
 .custom-link {
   text-decoration: none;
   color: inherit;
@@ -106,7 +109,7 @@ form {
 }
 
 input {
-  height: 35px;
+  height: 45px;
   width: 100%;
   padding: 10px;
   border: 2px solid var(--border-col);
@@ -114,6 +117,7 @@ input {
   background: none;
   outline: none;
   box-sizing: border-box;
+  font-size: 1rem;
 }
 
 label {
@@ -123,7 +127,7 @@ label {
   transition: 0.3s ease all;
   pointer-events: none;
 
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   color: var(--border-col);
   background-color: var(--background-col);
 
@@ -134,7 +138,7 @@ label {
 input:focus ~ label,
 input:not(:placeholder-shown) ~ label {
   top: 2px;
-  font-size: 0.6rem;
+  font-size: 0.7rem;
   color: var(--focus-label-color);
   padding: 2px 6px;
 }
@@ -160,8 +164,9 @@ input:focus {
 
 .btn-submit {
   width: 100%;
-  padding: 5px;
-  font-size: 0.9rem;
+  padding: 10px;
+  font-size: 1.1rem;
+  font-weight: bold;
   color: #fff;
   background-color: var(--button-st-col);
   border: 2px solid rgb(255, 255, 255, 0);
@@ -175,7 +180,8 @@ input:focus {
 }
 
 .un-valid {
-  border-color: red;
+  border-color: rgb(255, 128, 128);
+  color: rgb(253, 80, 80);
 }
 
 .submit:hover {
@@ -207,27 +213,22 @@ input:focus {
   color: var(--icons-col);
 }
 
-.recreate-password {
-  font-size: 1rem;
-  color: var(--text-col);
-}
-
-.recreate-password:hover {
-  color: var(--icons-col);
-}
-
 .loader {
   border-radius: 50%;
-  border-top: 3px solid #3498db;
-  width: 60px;
-  height: 60px;
-  animation: spin 2s linear infinite;
+  border: 3px solid var(--background-col);
+  border-bottom: 3px solid var(--border-col);
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
   margin: auto;
 }
 
 @keyframes spin {
   0% {
     transform: rotate(0deg);
+  }
+  80% {
+    transform: rotate(250deg);
   }
   100% {
     transform: rotate(360deg);

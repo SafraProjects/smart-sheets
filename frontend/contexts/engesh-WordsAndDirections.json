@@ -1,6 +1,6 @@
 {
   "he": {
-    "button": "לאנגלית",
+    "button": "עברית",
     "tableTitle": "הוסף טבלה",
     "uploadedFile": "העלה קובץ",
     "createTable": "צור טבלה",
@@ -11,22 +11,26 @@
     "userNameInputLabel": "שם משתמש",
     "singUp": "הרשמה",
     "login": "התחברות",
-    "submit": "אימות",
-    "recreatePassword": "שכחתי את הסיסמא שלי"
+    "submit": "אישור",
+    "recreatePassword": "שכחתי את הסיסמה שלי",
+    "createAccount": "צור חשבון",
+    "passwordsDoNotMatch": "הסיסמאות אינן תואמות"
   },
   "en": {
-    "button": "To hebrew",
-    "tableTitle": "Add table",
-    "uploadedFile": "Uploaded file",
-    "createTable": "Create table",
-    "tableFieldPlaceholder": "Add field",
-    "emailInputLabel": "Email",
+    "button": "To Hebrew",
+    "tableTitle": "Add Table",
+    "uploadedFile": "Upload File",
+    "createTable": "Create Table",
+    "tableFieldPlaceholder": "Add Field",
+    "emailInputLabel": "Email Address",
     "passwordInputLabel": "Password",
-    "secondPasswordInputLabel": "validate password",
-    "userNameInputLabel": "name",
+    "secondPasswordInputLabel": "Confirm Password",
+    "userNameInputLabel": "Username",
     "login": "Log In",
-    "singUp": "Sing Up",
+    "singUp": "Sign Up",
     "submit": "Confirm",
-    "recreatePassword": "I forgot my password"
+    "recreatePassword": "Forgot My Password",
+    "createAccount": "Create Account",
+    "passwordsDoNotMatch": "Passwords Do Not Match"
   }
 }

@@ -1,8 +1,9 @@
 from fastapi import Depends, status, HTTPException, Request, Response
-from fastapi.responses import RedirectResponse
-from fastapi.security import OAuth2PasswordBearer
+# from fastapi.responses import RedirectResponse
+# from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from functools import wraps
+import random
 
 
 from jose import jwt, JWTError
@@ -28,6 +29,10 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 class AutoService:
 
     @staticmethod
+    def generate_code(num: int) -> int:
+        return random.randint(10**(num-1), (10**num)-1)
+
+    @staticmethod
     def get_hash_password(password: str) -> str:
         return pwd_context.hash(password)
 
@@ -46,52 +51,6 @@ class AutoService:
             expire = datetime.now() + timedelta(days=Env.get_access_token_expire_days())
         print(expire)
         return expire
-
-    @staticmethod
-    def verify_password(password: str, hash_password: str) -> bool:
-        return pwd_context.verify(password, hash_password)
-
-    @staticmethod
-    async def get_user_by_field(value: str, field: str = "email", db=None):
-        try:
-            if not db:
-                db = await DBApplication.get_users_db()
-            user = await db.find_one({field: value})
-            if not user:
-                raise HTTPException(
-                    status_code=404, detail="User not found")
-            return user
-
-        except Exception as error:
-            print(f"\n\033[91m{str(error)}\033[0m")
-            raise HTTPException(
-                status_code=500, detail=f"An internal error occurred: {str(error)}")
-
-    @staticmethod
-    async def authenticate(
-        email: str,
-        password: str = None,
-        user_type: str = None,
-    ) -> UserDB:
-        user = await AutoService.get_user_by_field(value=email)
-
-        if not user["active"]:
-            print("a")
-            raise HTTPException(
-                status_code=400, detail=f"User is not active")
-
-        if user_type and user_type != user["user_type"]:
-            print("b")
-            raise HTTPException(
-                status_code=401, detail=f"User type incorrect")
-
-        if password and not AutoService.verify_password(password=password, hash_password=user["hashed_password"]):
-            print("c")
-            raise HTTPException(
-                status_code=400, detail="Incorrect password")
-
-        print("d")
-        return UserDB(**user)
 
     @staticmethod
     async def create_user(user_data: UserSingUp) -> dict:
@@ -120,9 +79,146 @@ class AutoService:
             print("\n\033[91m error: \033[0m", error)
             raise error
 
+    @staticmethod
+    async def set_verification_password(user_email: str, code: str) -> dict:
+        try:
+            hash_code = AutoService.get_hash_password(code)
+            db = await DBApplication.get_users_db()
+            update_result = await db.update_one({"email": user_email}, {
+                "$set": {"temp_hashed_password": hash_code, "change_password": False}})
+            if update_result.modified_count == 1:
+                return {"message": "User temp password update"}
+            else:
+                raise HTTPException(
+                    status_code=400, detail="No user found with this email")
+        except Exception as e:
+            raise e
+
+    @staticmethod
+    async def verify_temp_password(user_email: str, code: str):
+        result = await AutoService.get_user_by_field(user_email)
+        if result:
+            if AutoService.verify_password(code, result["temp_hashed_password"]):
+                try:
+                    db = await DBApplication.get_users_db()
+                    await db.update_one(
+                        {"email": user_email},
+                        {"$unset": {"temp_hashed_password": ""},
+                            "$set": {"change_password": True}}
+                    )
+                    return {"message": "Temporary password field removed successfully"}
+                except Exception as e:
+                    raise e
+            else:
+                raise HTTPException(
+                    status_code=400, detail="incorrect code")
+        else:
+            raise HTTPException(
+                status_code=400, detail="No matching user")
+
+    @staticmethod
+    async def update_user_password(user_email: str, code: int) -> dict:
+        try:
+            hash_code = AutoService.get_hash_password(code)
+            db = await DBApplication.get_users_db()
+            update_result = await db.update_one(
+                {"email": user_email, "change_password": True},
+                {"$set": {"hashed_password": hash_code},
+                 "$unset": {"change_password": ""}
+                 }
+            )
+            if update_result.modified_count == 1:
+                return {"message": "User temp password update"}
+            else:
+                raise HTTPException(
+                    status_code=400, detail="No user found with this email")
+        except Exception as e:
+            raise e
+
+    @staticmethod
+    async def get_user_by_field(value: str, field: str = "email", db=None):
+        try:
+            if not db:
+                db = await DBApplication.get_users_db()
+            user = await db.find_one({field: value})
+            if not user:
+                raise HTTPException(
+                    status_code=404, detail="User not found")
+            return user
+
+        except Exception as error:
+            print(f"\n\033[91m{str(error)}\033[0m")
+            raise HTTPException(
+                status_code=500, detail=f"An internal error occurred: {str(error)}")
+
+    @staticmethod
+    def verify_password(password: str, hash_password: str) -> bool:
+        return pwd_context.verify(password, hash_password)
+
+    @staticmethod
+    async def authenticate(
+        email: str,
+        password: str = None,
+        user_type: str = None,
+    ) -> UserDB:
+        user = await AutoService.get_user_by_field(value=email)
+
+        if not user["active"]:
+            print("a")
+            raise HTTPException(
+                status_code=400, detail=f"User is not active")
+
+        if user_type and user_type != user["user_type"]:
+            print("b")
+            raise HTTPException(
+                status_code=401, detail=f"User type incorrect")
+
+        if password and not AutoService.verify_password(password=password, hash_password=user["hashed_password"]):
+            print("c")
+            raise HTTPException(
+                status_code=400, detail="Incorrect password")
+
+        print("d")
+        return UserDB(**user)
 
 # >>> Tokens
 
+    @staticmethod
+    def create_verification_token(user_email: str) -> str:
+        expire = datetime.utcnow() + timedelta(minutes=30)
+        to_encode = {"email": user_email, "exp": expire}
+        token = jwt.encode(to_encode, Env.get_verification_key(),
+                           algorithm=Env.get_algorithm())
+        return token
+
+    @staticmethod
+    def create_access_token(user_data: UserDB) -> str:
+        access_key = Env.get_access_key()
+        expire = AutoService.get_expire_delta()
+        print("\033[92mUser:\033[0m", user_data)
+        to_encode = {
+            "user_id": user_data.id,
+            "user_type": user_data.user_type,
+            "hash_pw": user_data.hashed_password,
+            "exp": expire
+        }
+        encoded_jwt = jwt.encode(to_encode, access_key,
+                                 algorithm=Env.get_algorithm())
+        return encoded_jwt
+
+    @staticmethod
+    def create_refresh_token(user_data: UserDB):
+        access_key = Env.get_access_key()
+        expire = AutoService.get_expire_delta(
+            Env.get_refresh_token_expire_days())
+        print("\033[92mUser:\033[0m", user_data)
+        to_encode = {
+            "user_id": user_data.id,
+            "exp": expire
+        }
+        encoded_jwt = jwt.encode(to_encode, access_key,
+                                 algorithm=Env.get_algorithm())
+        return encoded_jwt
 
     @staticmethod
     def verify_refresh_token(refresh_token: str):
@@ -170,43 +266,8 @@ class AutoService:
             raise HTTPException(
                 status_code=500, detail=f"An error occurred: {str(e)}")
 
-    @staticmethod
-    def create_verification_token(user_email: str) -> str:
-        expire = datetime.utcnow() + timedelta(minutes=30)
-        to_encode = {"email": user_email, "exp": expire}
-        token = jwt.encode(to_encode, Env.get_verification_key(),
-                           algorithm=Env.get_algorithm())
-        return token
 
-    @staticmethod
-    def create_access_token(user_data: UserDB) -> str:
-        access_key = Env.get_access_key()
-        expire = AutoService.get_expire_delta()
-        print("\033[92mUser:\033[0m", user_data)
-        to_encode = {
-            "user_id": user_data.id,
-            "user_type": user_data.user_type,
-            "hash_pw": user_data.hashed_password,
-            "exp": expire
-        }
-        encoded_jwt = jwt.encode(to_encode, access_key,
-                                 algorithm=Env.get_algorithm())
-        return encoded_jwt
-
-    @staticmethod
-    def create_refresh_token(user_data: UserDB):
-        access_key = Env.get_access_key()
-        expire = AutoService.get_expire_delta(
-            Env.get_refresh_token_expire_days())
-        print("\033[92mUser:\033[0m", user_data)
-        to_encode = {
-            "user_id": user_data.id,
-            "exp": expire
-        }
-        encoded_jwt = jwt.encode(to_encode, access_key,
-                                 algorithm=Env.get_algorithm())
-        return encoded_jwt
-
+# >> decorators
 
 def authenticate_user(func):
     @wraps(func)
@@ -269,12 +330,12 @@ def authenticate_login(func):
                             secure=True,
                             samesite="Lax"
                         )
-                        return {"user_data": user}
+                        return user
             except Exception as e:
                 print(f"Error in refresh token process: {e}")
 
         # >>> go to log-in
-        print(">>")
+        print(">> go to log-in ")
         return await func(request, response, *args, **kwargs)
 
     return wrapper

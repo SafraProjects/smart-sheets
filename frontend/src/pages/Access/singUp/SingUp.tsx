@@ -54,30 +54,30 @@ export const SingUp: React.FC = () => {
         email: emailValidation.suggestion ? emailValidation.suggestion : "",
         emailValid: emailValidation.isValid,
         emailMessage: emailValidation.message,
-        password: !(password !== secondPassword),
+        password: password === secondPassword,
       }));
       unValidSubmit = true;
     }
   }, [unValidSubmit, email, password, secondPassword]);
 
   const handleSubmit = async () => {
-    console.log(">> submit");
+    if (!unValidSubmit || password === secondPassword) {
+      const userToDb: UserSignInDto = {
+        name: name,
+        email: email,
+        password: password,
+      };
 
-    const userToDb: UserSignInDto = {
-      name: name,
-      email: email,
-      password: password,
-    };
-
-    try {
-      setIsLoding(true);
-      const a = await singUp(userToDb);
-      console.log("message: ", a.message);
-    } catch (error) {
-      console.error("Error during sign up:", error);
-    } finally {
-      setIsLoding(false);
-      nav("/auto/verify-email/wait");
+      try {
+        setIsLoding(true);
+        const a = await singUp(userToDb);
+        console.log("message: ", a.message);
+      } catch (error) {
+        console.error("Error during sign up:", error);
+      } finally {
+        setIsLoding(false);
+        nav("/auto/verify/waite");
+      }
     }
   };
 
@@ -86,7 +86,7 @@ export const SingUp: React.FC = () => {
       <form>
         {!isLoding ? (
           <>
-            <h4>{getText("singUp")}</h4>
+            <h2>{getText("singUp")}</h2>
             <div className="input-container">
               <input
                 type="text"
@@ -114,7 +114,7 @@ export const SingUp: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                autoComplete="new-email"
+                autoComplete=""
               />
               <label htmlFor="emailInput">{getText("emailInputLabel")} *</label>
             </div>
@@ -177,11 +177,15 @@ export const SingUp: React.FC = () => {
             </div>
             <button
               onClick={handleSubmit}
-              className={`btn-submit ${unValidSubmit ? "" : "submit"}`}
+              className={`btn-submit ${
+                !formState.emailValid || password !== secondPassword
+                  ? ""
+                  : "submit"
+              }`}
               type="submit"
-              disabled={unValidSubmit}
+              disabled={!formState.emailValid || password !== secondPassword}
             >
-              {getText("submit")}
+              {getText("createAccount")}
             </button>{" "}
           </>
         ) : (
@@ -194,16 +198,20 @@ export const SingUp: React.FC = () => {
 
       <Alert
         isOpen={!formState.emailValid}
-        type="error"
+        // closeAt={15}
+        // closeButton={true}
+        position="left"
+        type="info"
         func={handelEmailFixed}
-        funcMessage="אשר"
+        funcMessage={getText("submit")}
         mainMessage={formState.email}
         message={formState.emailMessage}
       />
       <Alert
         isOpen={formState.emailValid && !formState.password}
+        closeAt={5}
         type="error"
-        message={"הסיסמאות אינן תואמות"}
+        message={getText("passwordsDoNotMatch")}
       />
     </>
   );

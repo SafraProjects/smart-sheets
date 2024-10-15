@@ -15,3 +15,18 @@ export const login = async (user_data: UserLogin): Promise<UserDBDto> => {
   const url = "/auto/log-in";
   return await genericPost(user_data, url);
 };
+
+export const sendPasswordToUser = async (email: string): Promise<{ message: string }> => {
+  const url = "/auto/send-verification-password/" + email;
+  return await genericPost({}, url);
+};
+
+export const verifyPassword = async (user_data: UserLogin): Promise<{ message: string }> => {
+  const url = `/auto/verify-password/${user_data.email}/${user_data.password}`;
+  return await genericPost({}, url);
+};
+
+export const recreatePassword = async (user_data: UserLogin): Promise<{ message: string }> => {
+  const url = `/auto/update-password/${user_data.email}/${user_data.password}`;
+  return await genericPost({}, url);
+};
