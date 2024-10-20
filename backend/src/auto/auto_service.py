@@ -16,7 +16,8 @@ from src.models import (
     UserDB,
     UserLogIn,
     UserSingUp,
-    UserEnum
+    UserEnum,
+    UserFront
 )
 
 from services.application import Env
@@ -311,7 +312,7 @@ def authenticate_login(func):
                 print(payload)
                 user = await AutoService.get_user_by_field(
                     field="_id", value=payload["user_id"])
-                return user
+                return UserFront(**user).dict(by_alias=False)
 
         if refresh_token:
             try:
@@ -330,7 +331,7 @@ def authenticate_login(func):
                             secure=True,
                             samesite="Lax"
                         )
-                        return user
+                        return UserFront(**user).dict(by_alias=True)
             except Exception as e:
                 print(f"Error in refresh token process: {e}")
 

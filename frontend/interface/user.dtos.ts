@@ -28,10 +28,18 @@ export class UserSignInDto {
   phoneNumber?: string;
 }
 
-export class UserDBDto extends UserSignInDto {
+export class UserDBDto {
   @IsNotEmpty({ message: "Id is required" })
   @IsString()
   id: string;
+
+  @IsNotEmpty({ message: "name is required" })
+  @IsString()
+  name: string;
+
+  @IsNotEmpty({ message: "Email is required" })
+  @IsEmail({}, { message: "Invalid email address" })
+  email: string;
 
   @IsNotEmpty({ message: "User Type is required" })
   @IsString()

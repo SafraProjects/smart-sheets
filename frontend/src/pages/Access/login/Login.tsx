@@ -1,18 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { useLanguage } from "../../../../contexts/languageContext";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../../../../contexts/languageContext";
+import { UserLogin } from "../../../../interface/user.dtos";
+import { Alert } from "../../../../modules/alert/Alert";
 import { login } from "../../../API/axios/axiosCenteral";
-import { UserDBDto, UserLogin } from "../../../../interface/user.dtos";
 import validateEmail from "../../../utils/validetEmail";
 import "./login.css";
-import { Alert } from "../../../../modules/alert/Alert";
 
 export const Login: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [alert, setAlert] = useState<boolean>(false);
   const [formValidEmail, setFormValidEmail] = useState({
     isValid: true,
     message: "",
@@ -62,15 +63,24 @@ export const Login: React.FC = () => {
       email: email,
       password: password,
     };
+
+    const timeoutPromise = new Promise((resolve) => {
+      setAlert(false);
+      setTimeout(() => resolve(null), 10000);
+    });
+
     try {
-      // console.log(userToDb);
       setIsLoading(true);
-      const user: UserDBDto = await login(userToDb);
 
-      nav("/user");
-      console.log("user data:  ", user);
+      const user = await Promise.race([login(userToDb), timeoutPromise]);
 
-      throw new Error("Unexpected response structure");
+      if (!user) {
+        console.log(">>> Timeout or no user received");
+        setAlert(true);
+      } else {
+        console.log("user data:  ", user);
+        nav("/user");
+      }
     } catch (error) {
       console.error("Error during sign up:", error);
     } finally {
@@ -153,11 +163,12 @@ export const Login: React.FC = () => {
             </button>
           </>
         ) : (
-          <>
-            {/* make a component from the loader !!! */}
-            <h3>רושם...</h3>
-            <div className="loader"></div>
-          </>
+          <div className="loader-box">
+            <h3>...רושם</h3>
+            <div className="loader-area">
+              <div className="loader"></div>
+            </div>
+          </div>
         )}
       </form>
       <Alert
@@ -167,7 +178,14 @@ export const Login: React.FC = () => {
         message={formValidEmail.message}
         mainMessage={formValidEmail.email}
         func={handelFixEmail}
-        funcMessage="אישור"
+        funcMessage={getText("submit")}
+      />
+      <Alert
+        isOpen={alert}
+        closeButton={true}
+        type="error"
+        position="top"
+        message={"הקליטה גרועה"}
       />
     </>
   );

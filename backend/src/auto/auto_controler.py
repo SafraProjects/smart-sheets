@@ -2,7 +2,7 @@ from fastapi import APIRouter, Body, Depends, Header, HTTPException, status, Req
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 # >>> models
-from src.models import UserLogIn, Token, UserSingUp
+from src.models import UserLogIn, Token, UserSingUp, UserFront
 
 # >>> services
 from .auto_service import AutoService, authenticate_login
@@ -104,7 +104,7 @@ async def login(request: Request, response: Response, form_data: UserLogIn):
     response.set_cookie(key="refresh_token",
                         value=refresh_token, httponly=True, secure=True)
 
-    return user
+    return UserFront(**user)
 
 
 @router.get("/auto-login")

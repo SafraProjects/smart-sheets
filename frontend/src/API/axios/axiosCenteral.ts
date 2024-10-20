@@ -16,6 +16,23 @@ export const login = async (user_data: UserLogin): Promise<UserDBDto> => {
   return await genericPost(user_data, url);
 };
 
+// export const login = async (user_data: UserLogin): Promise<UserDBDto> => {
+//   const url = "/auto/log-in";
+//   const user = (await genericPost(user_data, url)) as {
+//     _id: string;
+//     name: string;
+//     email: string;
+//     user_type: "user" | "admin" | "super_admin";
+//   }; // מיפוי הסוגים
+
+//   return {
+//     id: user._id,
+//     name: user.name,
+//     email: user.email,
+//     user_type: user.user_type,
+//   };
+// };
+
 export const sendPasswordToUser = async (email: string): Promise<{ message: string }> => {
   const url = "/auto/send-verification-password/" + email;
   return await genericPost({}, url);

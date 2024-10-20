@@ -16,6 +16,7 @@ export const SingUp: React.FC = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isSecondPasswordVisible, setIsSecondPasswordVisible] = useState(false);
   const [isLoding, setIsLoding] = useState<boolean>(false);
+  const [alert, setAlert] = useState<boolean>(false);
   const [formState, setFormState] = useState({
     email: "",
     emailValid: true,
@@ -68,15 +69,26 @@ export const SingUp: React.FC = () => {
         password: password,
       };
 
+      const timeoutPromise = new Promise((resolve) => {
+        setAlert(false);
+        setTimeout(() => resolve(null), 10000);
+      });
+
       try {
         setIsLoding(true);
-        const a = await singUp(userToDb);
-        console.log("message: ", a.message);
+
+        const mess = await Promise.race([singUp(userToDb), timeoutPromise]);
+
+        if (!mess) {
+          console.log(">>> Timeout or no user received");
+          setAlert(true);
+        } else {
+          console.log("message: ", mess);
+          nav("/auto/verify/waite");
+        }
+        setIsLoding(false);
       } catch (error) {
         console.error("Error during sign up:", error);
-      } finally {
-        setIsLoding(false);
-        nav("/auto/verify/waite");
       }
     }
   };
@@ -189,10 +201,12 @@ export const SingUp: React.FC = () => {
             </button>{" "}
           </>
         ) : (
-          <>
-            <h3>רושם...</h3>
-            <div className="loader"></div>
-          </>
+          <div className="loader-box">
+            <h3>...רושם</h3>
+            <div className="loader-area">
+              <div className="loader"></div>
+            </div>
+          </div>
         )}
       </form>
 
@@ -212,6 +226,13 @@ export const SingUp: React.FC = () => {
         closeAt={5}
         type="error"
         message={getText("passwordsDoNotMatch")}
+      />
+      <Alert
+        isOpen={alert}
+        closeButton={true}
+        type="error"
+        position="top"
+        message={"הקליטה גרועה"}
       />
     </>
   );

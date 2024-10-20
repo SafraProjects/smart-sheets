@@ -39,6 +39,12 @@ export const Alert: React.FC<AlertProp> = ({
   };
 
   useEffect(() => {
+    if (isOpen) {
+      setTimeOut(false);
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
     if (closeAt && isOpen) {
       setTimeOut(false);
       const timer = setTimeout(() => setTimeOut(true), closeAt * 1000);
