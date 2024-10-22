@@ -188,7 +188,7 @@ class AutoService:
 
     @staticmethod
     def create_verification_token(user_email: str) -> str:
-        expire = datetime.utcnow() + timedelta(minutes=1)
+        expire = datetime.utcnow() + timedelta(minutes=30)
         to_encode = {"email": user_email, "exp": expire}
         token = jwt.encode(to_encode, Env.get_verification_key(),
                            algorithm=Env.get_algorithm())
