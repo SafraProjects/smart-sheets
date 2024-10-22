@@ -165,28 +165,28 @@ class AutoService:
         user = await AutoService.get_user_by_field(value=email)
 
         if not user["active"]:
-            print("a")
+            print("User is not active")
             raise HTTPException(
                 status_code=400, detail=f"User is not active")
 
         if user_type and user_type != user["user_type"]:
-            print("b")
+            print("User type incorrect")
             raise HTTPException(
                 status_code=401, detail=f"User type incorrect")
 
         if password and not AutoService.verify_password(password=password, hash_password=user["hashed_password"]):
-            print("c")
+            print("Incorrect password")
             raise HTTPException(
                 status_code=400, detail="Incorrect password")
 
-        print("d")
+        print("User authenticate")
         return UserDB(**user)
 
 # >>> Tokens
 
     @staticmethod
     def create_verification_token(user_email: str) -> str:
-        expire = datetime.utcnow() + timedelta(minutes=30)
+        expire = datetime.utcnow() + timedelta(minutes=1)
         to_encode = {"email": user_email, "exp": expire}
         token = jwt.encode(to_encode, Env.get_verification_key(),
                            algorithm=Env.get_algorithm())
@@ -263,10 +263,6 @@ class AutoService:
             raise HTTPException(
                 status_code=401, detail={"error": "Invalid or expired token", "email": payload["email"]})
 
-        except Exception as e:
-            raise HTTPException(
-                status_code=500, detail=f"An error occurred: {str(e)}")
-
 
 # >> decorators
 
@@ -309,7 +305,8 @@ def authenticate_login(func):
             payload = AutoService.verify_access_token(
                 token=access_token,)
             if payload:
-                print(payload)
+                print("\033[92mDecode access token:\033[0m", payload)
+
                 user = await AutoService.get_user_by_field(
                     field="_id", value=payload["user_id"])
                 return UserFront(**user).dict(by_alias=False)
@@ -318,7 +315,7 @@ def authenticate_login(func):
             try:
                 payload = AutoService.verify_refresh_token(refresh_token)
                 if payload:
-                    print(payload)
+                    print("\033[92mDecode refresh token:\033[0m", payload)
                     user = AutoService.get_user_by_field(
                         field="_id", value=payload["user_id"])
                     new_access_token = AutoService.create_access_token(

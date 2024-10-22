@@ -20,7 +20,7 @@ router = APIRouter(tags=["Users"])
 
 @router.get("/get_by_id/{id}")
 @Auto.authenticate_user
-async def test(request: Request, response: Response, id: str = Path(...),) -> dict:
-    print({"user_id": id})
+async def test(request: Request, response: Response, id: str) -> dict:
+    print("user_id:", id)
     user = await UserService.get_user_by_field("_id", id)
     return {"user": user}

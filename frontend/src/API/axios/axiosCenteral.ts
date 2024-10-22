@@ -6,7 +6,7 @@ export const singUp = async (user_data: UserSignInDto): Promise<{ message: strin
   return await genericPost(user_data, url);
 };
 
-export const verify_email = async (temp_token: string): Promise<{ message: string }> => {
+export const verifyEmail = async (temp_token: string): Promise<{ message: string }> => {
   const url = "/auto/verify-email/" + temp_token;
   return await genericPost({}, url);
 };
@@ -32,6 +32,11 @@ export const login = async (user_data: UserLogin): Promise<UserDBDto> => {
 //     user_type: user.user_type,
 //   };
 // };
+
+export const resendVerificationEmail = async (email: string): Promise<{ message: string }> => {
+  const url = "/auto/resend-verification-email/" + email;
+  return await genericPost({}, url);
+};
 
 export const sendPasswordToUser = async (email: string): Promise<{ message: string }> => {
   const url = "/auto/send-verification-password/" + email;

@@ -7,16 +7,6 @@
   --button-st-col: rgb(165, 165, 165);
   --border-rad: 5px;
 }
-
-.log-back {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  width: 100%;
-  background-color: var(--login-bd-col);
-}
-
 .from-user-login {
   display: flex;
   flex-direction: column;
@@ -108,7 +98,7 @@ form {
   width: 100%;
 }
 
-input {
+.input {
   height: 45px;
   width: 100%;
   padding: 10px;
@@ -135,8 +125,8 @@ label {
 }
 
 /* מצב הפוקוס */
-input:focus ~ label,
-input:not(:placeholder-shown) ~ label {
+.input:focus ~ label,
+.input:not(:placeholder-shown) ~ label {
   top: 2px;
   font-size: 0.7rem;
   color: var(--focus-label-color);
@@ -145,19 +135,19 @@ input:not(:placeholder-shown) ~ label {
 
 /* הכוונה דינמית */
 :root[dir="ltr"] label,
-:root[dir="ltr"] input:focus ~ label,
-:root[dir="ltr"] input:not(:placeholder-shown) ~ label {
+:root[dir="ltr"] .input:focus ~ label,
+:root[dir="ltr"] .input:not(:placeholder-shown) ~ label {
   left: 10px;
   right: auto;
 }
 :root[dir="rtl"] label,
-:root[dir="rtl"] input:focus ~ label,
-:root[dir="rtl"] input:not(:placeholder-shown) ~ label {
+:root[dir="rtl"] .input:focus ~ label,
+:root[dir="rtl"] .input:not(:placeholder-shown) ~ label {
   right: 10px;
   left: auto;
 }
 
-input:focus {
+.input:focus {
   border-color: var(--focus-border-color);
   background: none;
 }

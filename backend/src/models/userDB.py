@@ -16,7 +16,7 @@ class UserDB(BaseModel):
     @staticmethod
     def convert_base_user_to_userDB(user_base: UserSingUp, user_id: str, hash_pw: str):
         return UserDB(
-            id=user_id,
+            _id=user_id,
             name=user_base.name,
             email=user_base.email,
             hashed_password=hash_pw,
@@ -32,7 +32,7 @@ class UserFront(BaseModel):
     @staticmethod
     def convert_userDB_to_UserFront(user: UserDB):
         return UserFront(
-            id=user.id,
+            _id=user.id,
             name=user.name,
             email=user.email,
             user_type=user.user_type.value)

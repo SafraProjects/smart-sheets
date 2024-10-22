@@ -13,7 +13,7 @@
   display: flex;
   align-items: center;
   gap: 7px;
-  padding: 20px 15px;
+  padding: 10px 15px;
   border-radius: var(--border-rad);
   font-size: 1.4rem;
   border: 2px solid var(--border-col);
@@ -27,7 +27,7 @@
   align-items: center;
 
   /* keep in mind that the hight of the button needs to be like the message */
-  padding: 20px;
+  padding: 10px;
   margin: 0 5px;
 
   background-color: var(--background-col);

@@ -7,16 +7,13 @@ import { UserSignInDto } from "../../../../interface/user.dtos";
 import { Alert } from "../../../../modules/alert/Alert";
 import { singUp } from "../../../API/axios/axiosCenteral";
 import validateEmail from "../../../utils/validetEmail";
+import { Loader } from "../../../../modules/loader/Loader";
 
 export const SingUp: React.FC = () => {
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [secondPassword, setSecondPassword] = useState<string>("");
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [isSecondPasswordVisible, setIsSecondPasswordVisible] = useState(false);
-  const [isLoding, setIsLoding] = useState<boolean>(false);
-  const [alert, setAlert] = useState<boolean>(false);
   const [formState, setFormState] = useState({
     email: "",
     emailValid: true,
@@ -24,6 +21,13 @@ export const SingUp: React.FC = () => {
     password: true,
     // סטטוס של הסיסמא
   });
+
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isSecondPasswordVisible, setIsSecondPasswordVisible] = useState(false);
+
+  const [isLoding, setIsLoding] = useState<boolean>(false);
+
+  const [alert, setAlert] = useState<boolean>(false);
 
   const { getText } = useLanguage();
   const nav = useNavigate();
@@ -69,26 +73,19 @@ export const SingUp: React.FC = () => {
         password: password,
       };
 
-      const timeoutPromise = new Promise((resolve) => {
-        setAlert(false);
-        setTimeout(() => resolve(null), 10000);
-      });
-
       try {
+        setAlert(false);
         setIsLoding(true);
 
-        const mess = await Promise.race([singUp(userToDb), timeoutPromise]);
+        const mess = await singUp(userToDb);
 
-        if (!mess) {
-          console.log(">>> Timeout or no user received");
-          setAlert(true);
-        } else {
-          console.log("message: ", mess);
-          nav("/auto/verify/waite");
-        }
-        setIsLoding(false);
+        console.log("message: ", mess);
+        nav("/auto/verify/waite");
       } catch (error) {
         console.error("Error during sign up:", error);
+        setAlert(true);
+      } finally {
+        setIsLoding(false);
       }
     }
   };
@@ -96,11 +93,12 @@ export const SingUp: React.FC = () => {
   return (
     <>
       <form>
-        {!isLoding ? (
+        {!isLoding && (
           <>
             <h2>{getText("singUp")}</h2>
             <div className="input-container">
               <input
+                className="input"
                 type="text"
                 id="nameInput"
                 placeholder=" "
@@ -117,7 +115,7 @@ export const SingUp: React.FC = () => {
             </div>
             <div className="input-container">
               <input
-                className={formState.emailValid ? "" : "un-valid"}
+                className={"input " + (formState.emailValid ? "" : "un-valid")}
                 type="email"
                 id="emailInput"
                 placeholder=" "
@@ -132,6 +130,7 @@ export const SingUp: React.FC = () => {
             </div>
             <div className="input-container">
               <input
+                className="input"
                 type={isPasswordVisible ? "text" : "password"}
                 id="passwordInput"
                 placeholder=" "
@@ -161,7 +160,7 @@ export const SingUp: React.FC = () => {
             <div className="input-container">
               <input
                 type={isSecondPasswordVisible ? "text" : "password"}
-                className={formState.password ? "" : "un-valid"}
+                className={"input " + (formState.password ? "" : "un-valid")}
                 id="secondPasswordInput"
                 placeholder=" "
                 minLength={6}
@@ -190,24 +189,24 @@ export const SingUp: React.FC = () => {
             <button
               onClick={handleSubmit}
               className={`btn-submit ${
-                !formState.emailValid || password !== secondPassword
+                unValidSubmit ||
+                !formState.emailValid ||
+                password !== secondPassword
                   ? ""
                   : "submit"
               }`}
               type="submit"
-              disabled={!formState.emailValid || password !== secondPassword}
+              disabled={
+                unValidSubmit ||
+                !formState.emailValid ||
+                password !== secondPassword
+              }
             >
               {getText("createAccount")}
             </button>{" "}
           </>
-        ) : (
-          <div className="loader-box">
-            <h3>...רושם</h3>
-            <div className="loader-area">
-              <div className="loader"></div>
-            </div>
-          </div>
         )}
+        <Loader isOpen={isLoding} />
       </form>
 
       <Alert
@@ -217,9 +216,9 @@ export const SingUp: React.FC = () => {
         position="left"
         type="info"
         func={handelEmailFixed}
-        funcMessage={getText("submit")}
+        funcMessage={getText("confirm")}
         mainMessage={formState.email}
-        message={formState.emailMessage}
+        message={getText("alertEmailMessage")}
       />
       <Alert
         isOpen={formState.emailValid && !formState.password}

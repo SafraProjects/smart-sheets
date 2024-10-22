@@ -9,12 +9,23 @@
     "passwordInputLabel": "סיסמה",
     "secondPasswordInputLabel": "אימות סיסמה",
     "userNameInputLabel": "שם משתמש",
+    "resend": "שליחה מחדש",
     "singUp": "הרשמה",
     "login": "התחברות",
-    "submit": "אישור",
+    "loading": "טוען",
+    "confirm": "אישור",
+    "cancel": "ביטול",
+    "yes": "כן",
+    "no": "לא",
     "recreatePassword": "שכחתי את הסיסמה שלי",
     "createAccount": "צור חשבון",
-    "passwordsDoNotMatch": "הסיסמאות אינן תואמות"
+    "passwordsDoNotMatch": "הסיסמאות אינן תואמות",
+    "alertEmailMessage": "כתובת אימייל שגויה - האם התכוונת ל:",
+    "verifyEmailMessage": "\n\n האימות עבר בהצלחה\n\nמיד תעבור להתחברות",
+    "SandPasswordToEmailMessage": "\n\nמייל עם סיסמא זמנית לאימות החשבון נשלח לכתובת הדואל שסיפקת.\n\nתודה,\nTabio - צוות התמיכה",
+
+    "EmailSandMessage": "\n\nמייל עם קישור לאימות החשבון נשלח לכתובת הדואל שסיפקת.\n\n\n\n\n\n\n\nתודה,\nTabio - צוות התמיכה",
+    "expireVerificationTokenMessage": "פג תוקף האימות!\n\nקבל מייל נוסף לצורך אימות"
   },
   "en": {
     "button": "To Hebrew",
@@ -26,11 +37,21 @@
     "passwordInputLabel": "Password",
     "secondPasswordInputLabel": "Confirm Password",
     "userNameInputLabel": "Username",
+    "resend": "Resend",
     "login": "Log In",
     "singUp": "Sign Up",
-    "submit": "Confirm",
+    "loading": "Loading",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "yes": "Yes",
+    "no": "No",
     "recreatePassword": "I Forgot My Password",
     "createAccount": "Create Account",
-    "passwordsDoNotMatch": "Passwords Do Not Match"
+    "passwordsDoNotMatch": "Passwords Do Not Match",
+    "alertEmailMessage": "Wrong email address, Did you mean:",
+    "SandPasswordToEmailMessage": "\n\nAn email with a verification code has been sent to the email address you provided.\n\nThank you,\nTabio - Support Team",
+    "verifyEmailMessage": "\n\nEmail verification was successful\n\nYou will be redirected to login shortly.",
+    "EmailSandMessage": "\n\nAn email with a verification link has been sent to the email address you provided.\n\n\n\n\n\n\n\nThank you,\nTabio - Support Team",
+    "expireVerificationTokenMessage": "Verification has expired!\n\nReceive another email for verification."
   }
 }

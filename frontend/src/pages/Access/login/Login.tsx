@@ -8,10 +8,12 @@ import { Alert } from "../../../../modules/alert/Alert";
 import { login } from "../../../API/axios/axiosCenteral";
 import validateEmail from "../../../utils/validetEmail";
 import "./login.css";
+import { Loader } from "../../../../modules/loader/Loader";
 
 export const Login: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [alertMessage, setAlertMessage] = useState<string>("ארעה שגיאה");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [alert, setAlert] = useState<boolean>(false);
   const [formValidEmail, setFormValidEmail] = useState({
@@ -39,24 +41,40 @@ export const Login: React.FC = () => {
   };
 
   const handelRecreatePassword = () => {
-    nav("/auto/verify/create-code");
+    nav("/auto/verify/sendPassword/" + email);
   };
   const handelNavigationToSingUp = () => {
     nav("/auto/sing-up");
   };
 
   useEffect(() => {
-    if (email.includes("@") && email.includes(".")) {
-      console.log(">>> valid:");
+    if (email.includes("@") && email.includes(".") && password) {
       const emailValidation = validateEmail(email);
+      console.log(">>> valid:");
       setFormValidEmail((prev) => ({
         ...prev,
         isValid: emailValidation.isValid,
-        message: emailValidation.message ? emailValidation.message : "",
+        message: getText("alertEmailMessage"),
         email: emailValidation.suggestion ? emailValidation.suggestion : "",
       }));
+    } else if (email && password) {
+      const emailValidation = validateEmail(email);
+      setFormValidEmail((prev) => ({
+        ...prev,
+        isValid: false,
+        message: "תחביר שגוי: חסרים סימני מפתח כגון @ או נקודה",
+        email: "",
+      }));
     }
-  }, [email]);
+    if (email.length === 0) {
+      setFormValidEmail((prev) => ({
+        ...prev,
+        isValid: true,
+        message: "",
+        email: "",
+      }));
+    }
+  }, [email, password]);
 
   const handleSubmit = async () => {
     const userToDb: UserLogin = {
@@ -64,25 +82,27 @@ export const Login: React.FC = () => {
       password: password,
     };
 
-    const timeoutPromise = new Promise((resolve) => {
-      setAlert(false);
-      setTimeout(() => resolve(null), 10000);
-    });
-
     try {
+      setAlert(false);
       setIsLoading(true);
 
-      const user = await Promise.race([login(userToDb), timeoutPromise]);
-
-      if (!user) {
-        console.log(">>> Timeout or no user received");
-        setAlert(true);
-      } else {
-        console.log("user data:  ", user);
+      const user = await login(userToDb);
+      console.log("user data:  ", user);
+      if (user) {
         nav("/user");
       }
     } catch (error) {
+      setAlertMessage("ארעה שגיאה");
+      if (error instanceof Error) {
+        if (error.message.includes("Internal Server Error")) {
+          setAlertMessage("המשתמש אינו קיים מערכת");
+        } else if (error.message.includes("Bad Request")) {
+          setAlertMessage("סיסמא שגויה");
+        }
+      }
       console.error("Error during sign up:", error);
+
+      setAlert(true);
     } finally {
       setIsLoading(false);
     }
@@ -91,12 +111,14 @@ export const Login: React.FC = () => {
   return (
     <>
       <form>
-        {!isLoading ? (
+        {!isLoading && (
           <>
             <h2>{getText("login")}</h2>
             <div className="input-container">
               <input
-                className={formValidEmail.isValid ? "" : "un-valid"}
+                className={
+                  "input " + (formValidEmail.isValid ? "" : "un-valid")
+                }
                 type="email"
                 id="emailInput"
                 placeholder=""
@@ -111,6 +133,7 @@ export const Login: React.FC = () => {
 
             <div className="input-container">
               <input
+                className="input"
                 type={isPasswordVisible ? "text" : "password"}
                 id="passwordInput"
                 placeholder=" "
@@ -159,33 +182,27 @@ export const Login: React.FC = () => {
               type="submit"
               disabled={!validateLoginSubmit}
             >
-              {getText("submit")}
+              {getText("confirm")}
             </button>
           </>
-        ) : (
-          <div className="loader-box">
-            <h3>...רושם</h3>
-            <div className="loader-area">
-              <div className="loader"></div>
-            </div>
-          </div>
         )}
+        <Loader isOpen={isLoading} />
       </form>
       <Alert
-        isOpen={!formValidEmail.isValid && email.length > 8}
+        isOpen={!formValidEmail.isValid && email.length > 15}
         type="error"
         position="top"
         message={formValidEmail.message}
         mainMessage={formValidEmail.email}
-        func={handelFixEmail}
-        funcMessage={getText("submit")}
+        func={formValidEmail.email !== "" ? handelFixEmail : undefined}
+        funcMessage={getText("yes")}
       />
       <Alert
         isOpen={alert}
         closeButton={true}
         type="error"
         position="top"
-        message={"הקליטה גרועה"}
+        message={alertMessage}
       />
     </>
   );

@@ -1,5 +1,15 @@
 import { IsEmail, IsNotEmpty, IsString, Matches } from "class-validator";
 
+export class UserToken {
+  @IsNotEmpty({ message: "Email is required" })
+  @IsEmail()
+  email: string;
+
+  @IsNotEmpty()
+  @IsString()
+  token: string;
+}
+
 export class UserLogin {
   @IsNotEmpty({ message: "Email is required" })
   @IsEmail()

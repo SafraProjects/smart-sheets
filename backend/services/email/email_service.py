@@ -65,7 +65,7 @@ class EmailService:
         <html dir="rtl">
             <body style="direction: rtl; text-align: right;">
                 <p>{"<br/>".join(body)}</p>
-                <p>אימות חשבון: <a href="{link}" style='color: rgb(255, 142, 14);'>לחץ כאן</a></p>
+                <p><b>אימות חשבון:</b>  <a href="{link}" style="color: rgb(255, 142, 14); text-decoration: none;" onmouseover="this.style.color='rgb(255, 142, 255)';" onmouseout="this.style.color='rgb(255, 142, 14)';">לחץ כאן</a></p>
             </body>
         </html>
         """

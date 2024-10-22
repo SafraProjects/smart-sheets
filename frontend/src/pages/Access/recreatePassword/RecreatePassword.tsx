@@ -14,6 +14,7 @@ export const RecreatePassword: React.FC = () => {
     <div className="recreate-password-area">
       <div className="input-container">
         <input
+          className="input"
           type={"password"}
           id="passwordInput"
           placeholder=" "
@@ -34,7 +35,7 @@ export const RecreatePassword: React.FC = () => {
         type="submit"
         disabled={password.length < 4}
       >
-        {getText("submit")}
+        {getText("confirm")}
       </button>
     </div>
   );

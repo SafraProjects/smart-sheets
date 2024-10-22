@@ -25,14 +25,14 @@ async def sing_up(data: UserSingUp):
     EmailService.send_email(
         receiver_email=verification_data["Email"],
         body=[
-            data.name + " ברוך הבא לאתר Tabio",
+            f"<b>{data.name}</b> ברוך הבא לאתר Tabio",
             "",
             "האתר שבו תוכל למנף קבצי רשומות לנקסט לבל :)",
             "לפני שמתחילים..."
         ],
         link=url
     )
-    print("\n\033[92m email send :\033[0m")
+    print("\n\033[92mEmail send :\033[0m")
     return {"message": "User registered, please check your email to verify your account"}
 
 
@@ -41,7 +41,7 @@ async def verify_email(user_email: str):
     token = AutoService.create_verification_token(
         user_email=user_email)
 
-    url = Env.get_frontend_port() + "/auto/verify/" + token
+    url = Env.get_frontend_port() + "/auto/verify/" + token + "/" + user_email
     EmailService.send_email(
         receiver_email=user_email,
         body=[
@@ -61,7 +61,7 @@ async def verify_email(verification_code: str):
 
 
 @router.post("/send-verification-password/{user_email}")
-async def verify_email(user_email: str):
+async def send_verification_password(user_email: str):
     code = AutoService.generate_code(4)
     message = await AutoService.set_verification_password(user_email=user_email, code=str(code))
     EmailService.send_email(
@@ -88,9 +88,7 @@ async def update_password(user_email: str, new_password: str):
 
 
 @router.post("/log-in")
-@authenticate_login
 async def login(request: Request, response: Response, form_data: UserLogIn):
-    print("aca")
     user = await AutoService.authenticate(email=form_data.email, password=form_data.password)
 
     if not user:
@@ -104,7 +102,8 @@ async def login(request: Request, response: Response, form_data: UserLogIn):
     response.set_cookie(key="refresh_token",
                         value=refresh_token, httponly=True, secure=True)
 
-    return UserFront(**user)
+    user_to_front = UserFront.convert_userDB_to_UserFront(user)
+    return user_to_front.dict(by_alias=False)
 
 
 @router.get("/auto-login")
