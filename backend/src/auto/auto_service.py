@@ -3,11 +3,11 @@ from fastapi import Depends, status, HTTPException, Request, Response
 # from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from functools import wraps
+
 import random
-
-
-from jose import jwt, JWTError
+import string
 from uuid import uuid4
+from jose import jwt, JWTError
 from datetime import datetime, timedelta
 
 from src.models import (
@@ -30,8 +30,10 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 class AutoService:
 
     @staticmethod
-    def generate_code(num: int) -> int:
-        return random.randint(10**(num-1), (10**num)-1)
+    def generate_code(num: int) -> str:
+        characters = string.ascii_uppercase + string.digits
+        return ''.join(random.choices(characters, k=num))
+        # return random.randint(10**(num-1), (10**num)-1)
 
     @staticmethod
     def get_hash_password(password: str) -> str:
@@ -107,7 +109,7 @@ class AutoService:
                         {"$unset": {"temp_hashed_password": ""},
                             "$set": {"change_password": True}}
                     )
-                    return {"message": "Temporary password field removed successfully"}
+                    return {"message": "Successfully match temporary password and user can update password"}
                 except Exception as e:
                     raise e
             else:
@@ -129,7 +131,7 @@ class AutoService:
                  }
             )
             if update_result.modified_count == 1:
-                return {"message": "User temp password update"}
+                return {"message": "User password update successfully"}
             else:
                 raise HTTPException(
                     status_code=400, detail="No user found with this email")

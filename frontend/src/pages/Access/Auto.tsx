@@ -43,7 +43,7 @@ export const Auto: React.FC = () => {
             </div>
           </Link>
         </div>
-        <img src={logo2} alt="tabio logo" width="130px" height="40px" />
+        <img src={logo2} alt="tabio logo" width="140px" height="50px" />
         <div className="from">
           <div className="input-area">
             <Outlet />

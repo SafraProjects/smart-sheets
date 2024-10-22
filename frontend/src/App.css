@@ -41,12 +41,16 @@
   box-sizing: border-box;
 }
 
+/* @font-face {
+  font-family: "varela-extra-regular-fm";
+  src: url("../assets/ffff/varela-extra-regular-fm.woff2") format("woff2");
+} */
+
 body {
-  /* 
-  font-family: "Assistant", sans-serif;
-  font-family: 'David Libre', serif; */
-  /* font-family: "Open Sans", sans-serif; 
-  */
+  /* font-family: "varela-extra-regular-fm", sans-serif; */
+  /*font-family: "Assistant", sans-serif;*/
+  /*font-family: 'David Libre', serif; */
+  /* font-family: "Open Sans", sans-serif; */
   font-family: "Noto Sans Hebrew", sans-serif;
 
   background-color: var(--background-col);

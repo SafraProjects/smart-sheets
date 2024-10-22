@@ -110,10 +110,21 @@ export const Verify: React.FC = () => {
   };
 
   const handleResendEmail = async () => {
-    if (userForm.email) {
+    if (userForm.email || email) {
       setIsLoading(true);
       try {
-        await resendVerificationEmail(userForm.email);
+        const message = await resendVerificationEmail(
+          userForm.email ? userForm.email : (email as string)
+        );
+        if (message) {
+          setUserForm({
+            value: "waite",
+            email: "",
+            token: "",
+          });
+          setExpire(false);
+          nav("/auto/verify/waite");
+        }
       } catch (error) {
         console.error("some error:::", error);
       } finally {
@@ -182,7 +193,7 @@ export const Verify: React.FC = () => {
       return (
         <div className="verification-email">
           {renderVerificationText(getText("expireVerificationTokenMessage"))}
-          <div onClick={handleResendEmail} className="btn-send-email">
+          <div onClick={() => handleResendEmail()} className="btn-send-email">
             <div className="send-email-btn-text">{getText("resend")}</div>
           </div>
         </div>
@@ -227,6 +238,8 @@ export const Verify: React.FC = () => {
             <input
               id="passwordSend2"
               type="text"
+              minLength={6}
+              maxLength={12}
               value={password}
               className="input"
               onChange={(e) => setPassword(e.target.value)}
@@ -235,9 +248,7 @@ export const Verify: React.FC = () => {
             <input
               type="submit"
               onClick={handleChangePassword}
-              className={
-                "btn-submit " + (password.length === 6 ? "submit" : "")
-              }
+              className={"btn-submit " + (password.length > 5 ? "submit" : "")}
               disabled={password.length < 6}
             />
           </div>
@@ -251,7 +262,7 @@ export const Verify: React.FC = () => {
   return (
     <div className="log-back">
       <div className="verification-area">
-        <img src={logo} alt="tabio logo" width="130px" height="40px" />
+        <img src={logo} alt="tabio logo" width="140px" height="50px" />
         {renderVerificationMessage()}
       </div>
     </div>
