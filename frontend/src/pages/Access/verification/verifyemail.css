@@ -1,0 +1,74 @@
+.log-back {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  background-color: var(--login-bd-col);
+}
+
+.verification-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 30px;
+  gap: 10px;
+
+  height: 90vh;
+  width: 400px;
+
+  background-color: white;
+  border-radius: var(--border-rad);
+}
+
+.verification-email {
+  height: 80%;
+  width: 100%;
+  padding-top: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  line-height: 1.6;
+  /* border: 2px solid rgba(0, 0, 0, 0.03);
+  border-radius: 20px; */
+}
+
+.create-new-password {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 80%;
+  height: 50%;
+}
+
+.btn-send-email {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+
+  width: 120px;
+  height: 40px;
+
+  border-radius: var(--border-rad);
+  background-color: var(--login-bd-col);
+}
+
+.btn-send-email:hover {
+  cursor: pointer;
+  background-color: var(--button-bg-color);
+}
+
+.btn-send-email:hover .send-email-btn-text {
+  font-weight: bold;
+  color: var(--text-col);
+}
+
+.send-email-btn-text {
+  font-weight: bold;
+  color: black;
+}

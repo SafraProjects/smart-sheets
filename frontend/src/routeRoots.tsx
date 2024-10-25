@@ -6,7 +6,7 @@ import { UserPage } from "./pages/users/userPage";
 import { Auto } from "./pages/Access/Auto";
 import { Login } from "./pages/Access/login/Login";
 import { SingUp } from "./pages/Access/singUp/SingUp";
-import { VerifyEmail } from "./pages/Access/verification/verifyEmail";
+import { Verify } from "./pages/Access/verification/verifyEmail";
 
 // import { Navigate, Route, Routes } from "react-router-dom";
 // import TableFieldInput from "./components/FieldInput";
@@ -42,8 +42,12 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/auto/verify-email/:value",
-    element: <VerifyEmail />,
+    path: "/auto/verify/:value",
+    element: <Verify />,
+  },
+  {
+    path: "/auto/verify/:value/:email",
+    element: <Verify />,
   },
 ]);
 

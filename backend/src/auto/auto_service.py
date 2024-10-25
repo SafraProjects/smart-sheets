@@ -1,12 +1,13 @@
 from fastapi import Depends, status, HTTPException, Request, Response
-from fastapi.responses import RedirectResponse
-from fastapi.security import OAuth2PasswordBearer
+# from fastapi.responses import RedirectResponse
+# from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from functools import wraps
 
-
-from jose import jwt, JWTError
+import random
+import string
 from uuid import uuid4
+from jose import jwt, JWTError
 from datetime import datetime, timedelta
 
 from src.models import (
@@ -15,17 +16,24 @@ from src.models import (
     UserDB,
     UserLogIn,
     UserSingUp,
-    UserEnum
+    UserEnum,
+    UserFront
 )
 
 from services.application import Env
-from ..DB import DBApplication
+from src.DB import DB
 
 # oauth2_schema = OAuth2PasswordBearer(tokenUrl="token")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 class AutoService:
+
+    @staticmethod
+    def generate_code(num: int) -> str:
+        characters = string.ascii_uppercase + string.digits
+        return ''.join(random.choices(characters, k=num))
+        # return random.randint(10**(num-1), (10**num)-1)
 
     @staticmethod
     def get_hash_password(password: str) -> str:
@@ -48,55 +56,9 @@ class AutoService:
         return expire
 
     @staticmethod
-    def verify_password(password: str, hash_password: str) -> bool:
-        return pwd_context.verify(password, hash_password)
-
-    @staticmethod
-    async def get_user_by_field(value: str, field: str = "email", db=None):
-        try:
-            if not db:
-                db = await DBApplication.get_users_db()
-            user = await db.find_one({field: value})
-            if not user:
-                raise HTTPException(
-                    status_code=404, detail="User not found")
-            return user
-
-        except Exception as error:
-            print(f"\n\033[91m{str(error)}\033[0m")
-            raise HTTPException(
-                status_code=500, detail=f"An internal error occurred: {str(error)}")
-
-    @staticmethod
-    async def authenticate(
-        email: str,
-        password: str = None,
-        user_type: str = None,
-    ) -> UserDB:
-        user = await AutoService.get_user_by_field(value=email)
-
-        if not user["active"]:
-            print("a")
-            raise HTTPException(
-                status_code=400, detail=f"User is not active")
-
-        if user_type and user_type != user["user_type"]:
-            print("b")
-            raise HTTPException(
-                status_code=401, detail=f"User type incorrect")
-
-        if password and not AutoService.verify_password(password=password, hash_password=user["hashed_password"]):
-            print("c")
-            raise HTTPException(
-                status_code=400, detail="Incorrect password")
-
-        print("d")
-        return UserDB(**user)
-
-    @staticmethod
     async def create_user(user_data: UserSingUp) -> dict:
         print("\n\033[92mUser sing in:\033[0m   ", user_data, "\n")
-        db = await DBApplication.get_users_db()
+        db = await DB.get_collection_db()
         existing_user = await db.find_one({"email": user_data.email})
         if existing_user:
             print("\n\033[90mUser exist:\033[0m   ", existing_user["email"])
@@ -120,55 +82,105 @@ class AutoService:
             print("\n\033[91m error: \033[0m", error)
             raise error
 
-
-# >>> Tokens
-
-
     @staticmethod
-    def verify_refresh_token(refresh_token: str):
+    async def set_verification_password(user_email: str, code: str) -> dict:
         try:
-            payload = jwt.decode(refresh_token, Env.get_refresh_key(), algorithms=[
-                                 Env.get_algorithm()])
-            return payload
-        except JWTError:
-            raise HTTPException(
-                status_code=401, detail="Invalid or expired refresh token")
-
-    @staticmethod
-    def verify_access_token(token: str, user_type: str = "user"):
-        try:
-            payload = jwt.decode(token, Env.get_access_key(user_type=user_type), algorithms=[
-                                 Env.get_algorithm()])
-            return payload
-        except JWTError:
-            return
-
-    @staticmethod
-    async def verify_account(verify_token: str):
-        try:
-            payload = jwt.decode(verify_token, Env.get_verification_key(), algorithms=[
-                                 Env.get_algorithm()])
-            db = await DBApplication.get_users_db()
-            update_result = await db.update_one({"email": payload["email"]}, {"$set": {"active": True}})
-            if update_result.modified_count == 1:
-                return {"message": "User verified successfully"}
+            hash_code = AutoService.get_hash_password(code)
+            update_result = await DB.update(conditions={"email": user_email}, updates={"temp_hashed_password": hash_code, "change_password": False})
+            if update_result["status"]:
+                return {"message": "User temp password update"}
             else:
                 raise HTTPException(
-                    status_code=400, detail="No user found with this email or user already active")
-
-        except JWTError:
-            payload = jwt.decode(
-                verify_token,
-                Env.get_verification_key(),
-                algorithms=[Env.get_algorithm()],
-                options={"verify_exp": False}
-            )
-            raise HTTPException(
-                status_code=401, detail={"error": "Invalid or expired token", "email": payload["email"]})
-
+                    status_code=400, detail="No user found with this email")
         except Exception as e:
+            raise e
+
+    @staticmethod
+    async def verify_temp_password(user_email: str, code: str):
+        result = await AutoService.get_user_by_field(user_email)
+        if result:
+            if AutoService.verify_password(code, result["temp_hashed_password"]):
+                try:
+                    await DB.update(
+                        conditions={"email": user_email},
+                        updates={"change_password": True},
+                        replace={"temp_hashed_password": ""},
+                        update_one=True
+                    )
+                    return {"message": "Successfully match temporary password and user can update password"}
+                except Exception as e:
+                    raise e
+            else:
+                raise HTTPException(
+                    status_code=400, detail="incorrect code")
+        else:
             raise HTTPException(
-                status_code=500, detail=f"An error occurred: {str(e)}")
+                status_code=400, detail="No matching user")
+
+    @staticmethod
+    async def update_user_password(user_email: str, code: int) -> dict:
+        try:
+            hash_code = AutoService.get_hash_password(code)
+
+            update_result = await DB.update(
+                {"email": user_email, "change_password": True},
+                {"hashed_password": hash_code},
+                {"change_password": ""},
+                True
+            )
+            if update_result["status"]:
+                return {"message": "User password update successfully"}
+            else:
+                raise HTTPException(
+                    status_code=400, detail="No user found with this email")
+        except Exception as e:
+            raise e
+
+    @staticmethod
+    async def get_user_by_field(value: str, field: str = "email"):
+        try:
+            user = await DB.find({field: value}, find_one=True)
+            if not user:
+                raise HTTPException(
+                    status_code=404, detail="User not found")
+            return user
+
+        except Exception as error:
+            print(f"\n\033[91m{str(error)}\033[0m")
+            raise HTTPException(
+                status_code=500, detail=f"An internal error occurred: {str(error)}")
+
+    @staticmethod
+    def verify_password(password: str, hash_password: str) -> bool:
+        return pwd_context.verify(password, hash_password)
+
+    @staticmethod
+    async def authenticate(
+        email: str,
+        password: str = None,
+        user_type: str = None,
+    ) -> UserDB:
+        user = await AutoService.get_user_by_field(value=email)
+
+        if not user["active"]:
+            print("User is not active")
+            raise HTTPException(
+                status_code=400, detail=f"User is not active")
+
+        if user_type and user_type != user["user_type"]:
+            print("User type incorrect")
+            raise HTTPException(
+                status_code=401, detail=f"User type incorrect")
+
+        if password and not AutoService.verify_password(password=password, hash_password=user["hashed_password"]):
+            print("Incorrect password")
+            raise HTTPException(
+                status_code=400, detail="Incorrect password")
+
+        print("User authenticate")
+        return UserDB(**user)
+
+# >>> Tokens
 
     @staticmethod
     def create_verification_token(user_email: str) -> str:
@@ -207,6 +219,53 @@ class AutoService:
                                  algorithm=Env.get_algorithm())
         return encoded_jwt
 
+    @staticmethod
+    def verify_refresh_token(refresh_token: str):
+        try:
+            payload = jwt.decode(refresh_token, Env.get_refresh_key(), algorithms=[
+                                 Env.get_algorithm()])
+            return payload
+        except JWTError:
+            raise HTTPException(
+                status_code=401, detail="Invalid or expired refresh token")
+
+    @staticmethod
+    def verify_access_token(token: str, user_type: str = "user"):
+        try:
+            payload = jwt.decode(token, Env.get_access_key(user_type=user_type), algorithms=[
+                                 Env.get_algorithm()])
+            return payload
+        except JWTError:
+            return
+
+    @staticmethod
+    async def verify_account(verify_token: str):
+        try:
+            payload = jwt.decode(verify_token, Env.get_verification_key(), algorithms=[
+                                 Env.get_algorithm()])
+            update_result = await DB.update({"email": payload["email"]}, {"active": True}, True)
+            if update_result.modified_count == 1:
+                return {"message": "User verified successfully"}
+            else:
+                raise HTTPException(
+                    status_code=400, detail="No user found with this email or user already active")
+
+        except JWTError:
+            try:
+                payload = jwt.decode(
+                    verify_token,
+                    Env.get_verification_key(),
+                    algorithms=[Env.get_algorithm()],
+                    options={"verify_exp": False}
+                )
+                raise HTTPException(
+                    status_code=401, detail={"error": "Expired token", "email": payload["email"]})
+            except Exception as e:
+                raise HTTPException(
+                    status_code=401, detail={"error": "false token"})
+
+
+# >> decorators
 
 def authenticate_user(func):
     @wraps(func)
@@ -247,16 +306,17 @@ def authenticate_login(func):
             payload = AutoService.verify_access_token(
                 token=access_token,)
             if payload:
-                print(payload)
+                print("\033[92mDecode access token:\033[0m", payload)
+
                 user = await AutoService.get_user_by_field(
                     field="_id", value=payload["user_id"])
-                return user
+                return UserFront(**user).dict(by_alias=False)
 
         if refresh_token:
             try:
                 payload = AutoService.verify_refresh_token(refresh_token)
                 if payload:
-                    print(payload)
+                    print("\033[92mDecode refresh token:\033[0m", payload)
                     user = AutoService.get_user_by_field(
                         field="_id", value=payload["user_id"])
                     new_access_token = AutoService.create_access_token(
@@ -269,12 +329,12 @@ def authenticate_login(func):
                             secure=True,
                             samesite="Lax"
                         )
-                        return {"user_data": user}
+                        return UserFront(**user).dict(by_alias=True)
             except Exception as e:
                 print(f"Error in refresh token process: {e}")
 
         # >>> go to log-in
-        print(">>")
+        print(">> go to log-in ")
         return await func(request, response, *args, **kwargs)
 
     return wrapper

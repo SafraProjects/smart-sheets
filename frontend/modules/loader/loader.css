@@ -1,0 +1,117 @@
+/* loader */
+
+.loader-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
+}
+
+.loader-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  padding: 5px;
+  background-color: var(--button-bg-color);
+  border-radius: 50%;
+}
+
+.loader {
+  border-radius: 50%;
+  border: 3px solid var(--button-bg-color);
+  border-bottom: 3px solid var(--background-col);
+  animation: spin 1s linear infinite;
+  width: 100%;
+  height: 100%;
+  margin: auto;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  80% {
+    transform: rotate(250deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.dots {
+  display: flex;
+  gap: 5px;
+  height: 20px;
+}
+
+.dot {
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  background-color: var(--button-bg-color);
+}
+
+.move {
+  animation: bounce3 1.5s infinite ease-in-out;
+}
+
+.pop {
+  animation: bounce2 1s infinite ease-in-out;
+}
+
+.dance {
+  animation: bounce1 1.5s infinite ease-in-out;
+}
+
+.one {
+  animation-delay: 0s;
+}
+
+.two {
+  animation-delay: 0.2s;
+}
+
+.three {
+  animation-delay: 0.4s;
+}
+
+@keyframes bounce1 {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes bounce2 {
+  0%,
+  100% {
+    height: 10px;
+    width: 10px;
+  }
+
+  50% {
+    transform: translateY(-3px) translateX(8px);
+    height: 15px;
+    width: 15px;
+  }
+}
+
+@keyframes bounce3 {
+  0%,
+  100% {
+    transform: translateX(60px);
+  }
+
+  50% {
+    transform: translateX(-60px);
+  }
+}

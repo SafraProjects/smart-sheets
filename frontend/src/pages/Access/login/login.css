@@ -1,0 +1,8 @@
+.recreate-password {
+  font-size: 1rem;
+  color: var(--text-col);
+}
+
+.recreate-password:hover {
+  color: var(--icons-col);
+}

@@ -1,22 +1,19 @@
-import { faEye, faEyeSlash, faL } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../../../../contexts/languageContext";
 import { UserSignInDto } from "../../../../interface/user.dtos";
-import { singUp } from "../../../API/axios/axiosCenteral";
-import { useNavigate } from "react-router-dom";
-import validateEmail from "../../../utils/validetEmail";
 import { Alert } from "../../../../modules/alert/Alert";
-import { Alerts } from "../../../../modules/alert/alerts";
+import { singUp } from "../../../API/axios/axiosCenteral";
+import validateEmail from "../../../utils/validetEmail";
+import { Loader } from "../../../../modules/loader/Loader";
 
 export const SingUp: React.FC = () => {
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [secondPassword, setSecondPassword] = useState<string>("");
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [isSecondPasswordVisible, setIsSecondPasswordVisible] = useState(false);
-  const [isLoding, setIsLoding] = useState<boolean>(false);
   const [formState, setFormState] = useState({
     email: "",
     emailValid: true,
@@ -24,6 +21,13 @@ export const SingUp: React.FC = () => {
     password: true,
     // סטטוס של הסיסמא
   });
+
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isSecondPasswordVisible, setIsSecondPasswordVisible] = useState(false);
+
+  const [isLoding, setIsLoding] = useState<boolean>(false);
+
+  const [alert, setAlert] = useState<boolean>(false);
 
   const { getText } = useLanguage();
   const nav = useNavigate();
@@ -55,41 +59,46 @@ export const SingUp: React.FC = () => {
         email: emailValidation.suggestion ? emailValidation.suggestion : "",
         emailValid: emailValidation.isValid,
         emailMessage: emailValidation.message,
-        password: !(password !== secondPassword),
+        password: password === secondPassword,
       }));
       unValidSubmit = true;
     }
   }, [unValidSubmit, email, password, secondPassword]);
 
   const handleSubmit = async () => {
-    console.log(">> submit");
+    if (!unValidSubmit || password === secondPassword) {
+      const userToDb: UserSignInDto = {
+        name: name,
+        email: email,
+        password: password,
+      };
 
-    const userToDb: UserSignInDto = {
-      name: name,
-      email: email,
-      password: password,
-    };
+      try {
+        setAlert(false);
+        setIsLoding(true);
 
-    try {
-      setIsLoding(true);
-      const a = await singUp(userToDb);
-      console.log("message: ", a.message);
-    } catch (error) {
-      console.error("Error during sign up:", error);
-    } finally {
-      setIsLoding(false);
-      nav("/auto/verify-email/wait");
+        const mess = await singUp(userToDb);
+
+        console.log("message: ", mess);
+        nav("/auto/verify/waite");
+      } catch (error) {
+        console.error("Error during sign up:", error);
+        setAlert(true);
+      } finally {
+        setIsLoding(false);
+      }
     }
   };
 
   return (
     <>
       <form>
-        {!isLoding ? (
+        {!isLoding && (
           <>
-            <h4>{getText("singUp")}</h4>
+            <h2>{getText("singUp")}</h2>
             <div className="input-container">
               <input
+                className="input"
                 type="text"
                 id="nameInput"
                 placeholder=" "
@@ -106,7 +115,7 @@ export const SingUp: React.FC = () => {
             </div>
             <div className="input-container">
               <input
-                className={formState.emailValid ? "" : "un-valid"}
+                className={"input " + (formState.emailValid ? "" : "un-valid")}
                 type="email"
                 id="emailInput"
                 placeholder=" "
@@ -115,12 +124,13 @@ export const SingUp: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                autoComplete="new-email"
+                autoComplete=""
               />
               <label htmlFor="emailInput">{getText("emailInputLabel")} *</label>
             </div>
             <div className="input-container">
               <input
+                className="input"
                 type={isPasswordVisible ? "text" : "password"}
                 id="passwordInput"
                 placeholder=" "
@@ -150,7 +160,7 @@ export const SingUp: React.FC = () => {
             <div className="input-container">
               <input
                 type={isSecondPasswordVisible ? "text" : "password"}
-                className={formState.password ? "" : "un-valid"}
+                className={"input " + (formState.password ? "" : "un-valid")}
                 id="secondPasswordInput"
                 placeholder=" "
                 minLength={6}
@@ -178,32 +188,50 @@ export const SingUp: React.FC = () => {
             </div>
             <button
               onClick={handleSubmit}
-              className={`btn-submit ${unValidSubmit ? "" : "submit"}`}
+              className={`btn-submit ${
+                unValidSubmit ||
+                !formState.emailValid ||
+                password !== secondPassword
+                  ? ""
+                  : "submit"
+              }`}
               type="submit"
-              disabled={unValidSubmit}
+              disabled={
+                unValidSubmit ||
+                !formState.emailValid ||
+                password !== secondPassword
+              }
             >
-              {getText("submit")}
+              {getText("createAccount")}
             </button>{" "}
           </>
-        ) : (
-          <>
-            <h3>רושם...</h3>
-            <div className="loader"></div>
-          </>
         )}
+        <Loader isOpen={isLoding} />
       </form>
 
       <Alert
         isOpen={!formState.emailValid}
-        type="error"
+        // closeAt={15}
+        // closeButton={true}
+        position="left"
+        type="info"
         func={handelEmailFixed}
-        funcMessage="אשר"
-        message={formState.emailMessage}
+        funcMessage={getText("confirm")}
+        mainMessage={formState.email}
+        message={getText("alertEmailMessage")}
       />
       <Alert
         isOpen={formState.emailValid && !formState.password}
+        closeAt={5}
         type="error"
-        message={"הסיסמאות אינן תואמות"}
+        message={getText("passwordsDoNotMatch")}
+      />
+      <Alert
+        isOpen={alert}
+        closeButton={true}
+        type="error"
+        position="top"
+        message={"הקליטה גרועה"}
       />
     </>
   );

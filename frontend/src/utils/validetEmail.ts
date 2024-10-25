@@ -35,7 +35,7 @@ function validateEmail(email: string) {
     return {
       isValid: false,
       suggestion: `${user}@${suggestedDomain}`,
-      message: `Did you mean ${user}@${suggestedDomain}?`,
+      message: `Did you mean: `,
     };
   }
 

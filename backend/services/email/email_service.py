@@ -26,7 +26,7 @@ class EmailService:
         if link:
             EmailService._add_link(msg, link=link, body=body)
         else:
-            msg.set_content(body)
+            EmailService._no_link(msg, body)
 
         if add_attachment:
             EmailService._add_attachment(msg, add_attachment)
@@ -65,7 +65,20 @@ class EmailService:
         <html dir="rtl">
             <body style="direction: rtl; text-align: right;">
                 <p>{"<br/>".join(body)}</p>
-                <p>אימות חשבון: <a href="{link}" style='color: rgb(255, 142, 14);'>לחץ כאן</a></p>
+                <p><b>אימות חשבון:</b>  <a href="{link}" style="color: rgb(255, 142, 14); text-decoration: none;" onmouseover="this.style.color='rgb(255, 142, 255)';" onmouseout="this.style.color='rgb(255, 142, 14)';">לחץ כאן</a></p>
+            </body>
+        </html>
+        """
+        msg.set_content(html_content, subtype='html')
+
+    def _no_link(msg: EmailMessage, body: str):
+        if isinstance(body, str):
+            body = [body]
+
+        html_content = f"""
+        <html dir="rtl">
+            <body style="direction: rtl; text-align: right;">
+                <p>{"<br/>".join(body)}</p>
             </body>
         </html>
         """

@@ -8,12 +8,24 @@ export type KeyLanguageWords =
   | "tableFieldPlaceholder"
   | "emailInputLabel"
   | "passwordInputLabel"
-  | "submit"
+  | "resend"
   | "singUp"
+  | "login"
+  | "loading"
+  | "cancel"
+  | "confirm"
+  | "yes"
+  | "no"
   | "secondPasswordInputLabel"
   | "userNameInputLabel"
   | "recreatePassword"
-  | "login";
+  | "createAccount"
+  | "passwordsDoNotMatch"
+  | "alertEmailMessage"
+  | "verifyEmailMessage"
+  | "SandPasswordToEmailMessage"
+  | "expireVerificationTokenMessage"
+  | "EmailSandMessage";
 
 export interface LanguageTextInterface {
   he: {
