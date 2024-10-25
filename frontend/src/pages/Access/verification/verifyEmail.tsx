@@ -95,6 +95,12 @@ export const Verify: React.FC = () => {
     emailVerification();
   }, [userForm.token]);
 
+  useEffect(() => {
+    if (value === "resendTempToken") {
+      handleResendEmail();
+    }
+  }, [value]);
+
   // פונקציה לטיפול בשגיאות אימייל
   const handleEmailError = (error: unknown) => {
     if (error instanceof Error) {

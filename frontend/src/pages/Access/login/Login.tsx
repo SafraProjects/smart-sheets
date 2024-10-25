@@ -94,9 +94,11 @@ export const Login: React.FC = () => {
     } catch (error) {
       setAlertMessage("ארעה שגיאה");
       if (error instanceof Error) {
-        if (error.message.includes("Internal Server Error")) {
+        if (error.message.includes("User not found")) {
           setAlertMessage("המשתמש אינו קיים מערכת");
-        } else if (error.message.includes("Bad Request")) {
+        } else if (error.message.includes("User is not active")) {
+          setAlertMessage("המשתמש אינו פעיל");
+        } else if (error.message.includes("Incorrect password")) {
           setAlertMessage("סיסמא שגויה");
         }
       }
@@ -106,6 +108,10 @@ export const Login: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleResendVerificationToken = () => {
+    nav("/auto/verify/resendTempToken/" + email);
   };
 
   return (
@@ -188,6 +194,7 @@ export const Login: React.FC = () => {
         )}
         <Loader isOpen={isLoading} />
       </form>
+
       <Alert
         isOpen={!formValidEmail.isValid && email.length > 15}
         type="error"
@@ -197,8 +204,19 @@ export const Login: React.FC = () => {
         func={formValidEmail.email !== "" ? handelFixEmail : undefined}
         funcMessage={getText("yes")}
       />
+
       <Alert
-        isOpen={alert}
+        isOpen={alert && alertMessage === "המשתמש אינו פעיל"}
+        closeButton={true}
+        type="error"
+        position="top"
+        message={alertMessage + ", תרצה לקבל לינק אימות נוסף?"}
+        func={email !== "" ? handleResendVerificationToken : undefined}
+        funcMessage={getText("yes")}
+      />
+
+      <Alert
+        isOpen={alert && alertMessage !== "המשתמש אינו פעיל"}
         closeButton={true}
         type="error"
         position="top"

@@ -6,7 +6,7 @@ from src.models import UserLogIn, Token, UserSingUp, UserFront
 
 # >>> services
 from .auto_service import AutoService, authenticate_login
-from services.email.email_service import EmailService
+from services.email import EmailService
 from services.application import Env
 
 

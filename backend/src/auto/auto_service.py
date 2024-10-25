@@ -21,7 +21,7 @@ from src.models import (
 )
 
 from services.application import Env
-from ..DB import DBApplication
+from src.DB import DB
 
 # oauth2_schema = OAuth2PasswordBearer(tokenUrl="token")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -58,7 +58,7 @@ class AutoService:
     @staticmethod
     async def create_user(user_data: UserSingUp) -> dict:
         print("\n\033[92mUser sing in:\033[0m   ", user_data, "\n")
-        db = await DBApplication.get_users_db()
+        db = await DB.get_collection_db()
         existing_user = await db.find_one({"email": user_data.email})
         if existing_user:
             print("\n\033[90mUser exist:\033[0m   ", existing_user["email"])
@@ -86,10 +86,8 @@ class AutoService:
     async def set_verification_password(user_email: str, code: str) -> dict:
         try:
             hash_code = AutoService.get_hash_password(code)
-            db = await DBApplication.get_users_db()
-            update_result = await db.update_one({"email": user_email}, {
-                "$set": {"temp_hashed_password": hash_code, "change_password": False}})
-            if update_result.modified_count == 1:
+            update_result = await DB.update(conditions={"email": user_email}, updates={"temp_hashed_password": hash_code, "change_password": False})
+            if update_result["status"]:
                 return {"message": "User temp password update"}
             else:
                 raise HTTPException(
@@ -103,11 +101,11 @@ class AutoService:
         if result:
             if AutoService.verify_password(code, result["temp_hashed_password"]):
                 try:
-                    db = await DBApplication.get_users_db()
-                    await db.update_one(
-                        {"email": user_email},
-                        {"$unset": {"temp_hashed_password": ""},
-                            "$set": {"change_password": True}}
+                    await DB.update(
+                        conditions={"email": user_email},
+                        updates={"change_password": True},
+                        replace={"temp_hashed_password": ""},
+                        update_one=True
                     )
                     return {"message": "Successfully match temporary password and user can update password"}
                 except Exception as e:
@@ -123,14 +121,14 @@ class AutoService:
     async def update_user_password(user_email: str, code: int) -> dict:
         try:
             hash_code = AutoService.get_hash_password(code)
-            db = await DBApplication.get_users_db()
-            update_result = await db.update_one(
+
+            update_result = await DB.update(
                 {"email": user_email, "change_password": True},
-                {"$set": {"hashed_password": hash_code},
-                 "$unset": {"change_password": ""}
-                 }
+                {"hashed_password": hash_code},
+                {"change_password": ""},
+                True
             )
-            if update_result.modified_count == 1:
+            if update_result["status"]:
                 return {"message": "User password update successfully"}
             else:
                 raise HTTPException(
@@ -139,11 +137,9 @@ class AutoService:
             raise e
 
     @staticmethod
-    async def get_user_by_field(value: str, field: str = "email", db=None):
+    async def get_user_by_field(value: str, field: str = "email"):
         try:
-            if not db:
-                db = await DBApplication.get_users_db()
-            user = await db.find_one({field: value})
+            user = await DB.find({field: value}, find_one=True)
             if not user:
                 raise HTTPException(
                     status_code=404, detail="User not found")
@@ -247,8 +243,7 @@ class AutoService:
         try:
             payload = jwt.decode(verify_token, Env.get_verification_key(), algorithms=[
                                  Env.get_algorithm()])
-            db = await DBApplication.get_users_db()
-            update_result = await db.update_one({"email": payload["email"]}, {"$set": {"active": True}})
+            update_result = await DB.update({"email": payload["email"]}, {"active": True}, True)
             if update_result.modified_count == 1:
                 return {"message": "User verified successfully"}
             else:
@@ -256,14 +251,18 @@ class AutoService:
                     status_code=400, detail="No user found with this email or user already active")
 
         except JWTError:
-            payload = jwt.decode(
-                verify_token,
-                Env.get_verification_key(),
-                algorithms=[Env.get_algorithm()],
-                options={"verify_exp": False}
-            )
-            raise HTTPException(
-                status_code=401, detail={"error": "Invalid or expired token", "email": payload["email"]})
+            try:
+                payload = jwt.decode(
+                    verify_token,
+                    Env.get_verification_key(),
+                    algorithms=[Env.get_algorithm()],
+                    options={"verify_exp": False}
+                )
+                raise HTTPException(
+                    status_code=401, detail={"error": "Expired token", "email": payload["email"]})
+            except Exception as e:
+                raise HTTPException(
+                    status_code=401, detail={"error": "false token"})
 
 
 # >> decorators

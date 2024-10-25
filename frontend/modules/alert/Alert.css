@@ -164,9 +164,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 30px;
-  width: 30px;
-  font-size: 1.2rem;
+  height: 20px;
+  width: 20px;
+  font-size: 1rem;
 }
 
 .close-alert:hover {

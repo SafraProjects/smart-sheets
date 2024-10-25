@@ -23,7 +23,6 @@
     "alertEmailMessage": "כתובת אימייל שגויה - האם התכוונת ל:",
     "verifyEmailMessage": "\n\n האימות עבר בהצלחה\n\nמיד תעבור להתחברות",
     "SandPasswordToEmailMessage": "\n\nמייל עם סיסמא זמנית לאימות החשבון נשלח לכתובת הדואל שסיפקת.\n\nתודה,\nTabio - צוות התמיכה",
-
     "EmailSandMessage": "\n\nמייל עם קישור לאימות החשבון נשלח לכתובת הדואל שסיפקת.\n\n\n\n\n\n\n\nתודה,\nTabio - צוות התמיכה",
     "expireVerificationTokenMessage": "פג תוקף האימות!\n\nקבל מייל נוסף לצורך אימות"
   },
