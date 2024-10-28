@@ -3,13 +3,16 @@ from fastapi import Depends, HTTPException, Request, Response, status, APIRouter
 from fastapi.security import OAuth2PasswordRequestForm
 
 # >>> models
+
+
 from src.models import (
     UserSingUp,
     UserLogIn,
     UserDB,
     Token,
-    BaseTable,
-    UserTables
+    # Column,
+    Row,
+    BaseTable
 )
 
 # >>> services
@@ -31,10 +34,19 @@ async def test(request: Request, response: Response, id: str) -> dict:
 
 @router.post("/insert-new-table/{user_id}/{table_name}")
 @Auto.authenticate_user
-async def test(request: Request, response: Response, user_id: str, table_name: str, table_data: BaseTable = Depends()) -> UserTables:
-    # print("user_id:", user_id)
+async def test(request: Request, response: Response, user_id: str, table_name: str, table_data: BaseTable):
+    # the way to init json from db to object in pydantic
     # user_tables = UserTables(**table_db)
     # print(json.dumps(table_db, indent=2))
     # print(user_tables.model_dump_json(indent=2))
+    print("user_id:", user_id)
     table_db = await UserService.add_table(user_id=user_id, table_name=table_name, table_data=table_data)
+    return table_db
+
+
+@router.post("/add-table-row/{user_id}/{table_index}")
+@Auto.authenticate_user
+async def add_row(request: Request, response: Response, user_id: str, table_index: int, new_row: Row):
+    print("user_id:", user_id)
+    table_db = await UserService.add_row(user_id, table_index, new_row)
     return table_db

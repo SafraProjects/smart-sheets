@@ -105,7 +105,7 @@ class AutoService:
                         conditions={"email": user_email},
                         updates={"change_password": True},
                         replace={"temp_hashed_password": ""},
-                        update_one=True
+
                     )
                     return {"message": "Successfully match temporary password and user can update password"}
                 except Exception as e:
@@ -125,8 +125,7 @@ class AutoService:
             update_result = await DB.update(
                 {"email": user_email, "change_password": True},
                 {"hashed_password": hash_code},
-                {"change_password": ""},
-                True
+                {"change_password": ""}
             )
             if update_result["status"]:
                 return {"message": "User password update successfully"}
@@ -139,7 +138,7 @@ class AutoService:
     @staticmethod
     async def get_user_by_field(value: str, field: str = "email"):
         try:
-            user = await DB.find({field: value}, find_one=True)
+            user = await DB.find({field: value})
             if not user:
                 raise HTTPException(
                     status_code=404, detail="User not found")
@@ -243,8 +242,8 @@ class AutoService:
         try:
             payload = jwt.decode(verify_token, Env.get_verification_key(), algorithms=[
                                  Env.get_algorithm()])
-            update_result = await DB.update({"email": payload["email"]}, {"active": True}, True)
-            if update_result.modified_count == 1:
+            update_result = await DB.update({"email": payload["email"]}, {"active": True})
+            if update_result["status"]:
                 return {"message": "User verified successfully"}
             else:
                 raise HTTPException(
