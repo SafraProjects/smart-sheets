@@ -6,11 +6,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 
 from src.models import (
-    UserSingUp,
-    UserLogIn,
-    UserDB,
     Token,
-    # Column,
+    Column,
     Row,
     BaseTable
 )
@@ -44,9 +41,50 @@ async def test(request: Request, response: Response, user_id: str, table_name: s
     return table_db
 
 
-@router.post("/add-table-row/{user_id}/{table_index}")
+# rows API
+@router.post("/add-row/t/{table_id}")
 @Auto.authenticate_user
-async def add_row(request: Request, response: Response, user_id: str, table_index: int, new_row: Row):
-    print("user_id:", user_id)
-    table_db = await UserService.add_row(user_id, table_index, new_row)
+async def add_row(request: Request, response: Response, table_id: str, new_row: Row):
+    print("user_id:", table_id)
+    table_db = await UserService.add_row(table_id, new_row)
+    return table_db
+
+
+@router.post("/update-row/t/{table_id}/r/{row_id}/c/{column_id}/v/{value}")
+@Auto.authenticate_user
+async def add_row(
+    request: Request,
+    response: Response,
+    table_id: str,
+    row_id: str,
+    column_id: str,
+    value
+):
+    print("user_id:", table_id)
+    table_db = await UserService.update_row(table_id, row_id, column_id, value)
+    return table_db
+
+
+@router.post("/delete-row/t/{table_id}/r/{row_id}")
+@Auto.authenticate_user
+async def add_row(request: Request, response: Response, table_id: str, row_id: str):
+    print("user_id:", table_id)
+    table_db = await UserService.delete_row(table_id, row_id)
+    return table_db
+
+
+# columns API
+@router.post("/add-column/t/{table_id}")
+@Auto.authenticate_user
+async def add_row(request: Request, response: Response, table_id: str, column_data: Column):
+    print("user_id:", table_id)
+    table_db = await UserService.add_column(table_id, column_data)
+    return table_db
+
+
+@router.post("/delete-column/t/{table_id}")
+@Auto.authenticate_user
+async def add_row(request: Request, response: Response, table_id: str, column_id: str):
+    print("user_id:", table_id)
+    table_db = await UserService.delete_column(table_id, column_id)
     return table_db

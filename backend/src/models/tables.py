@@ -11,7 +11,7 @@ class Column(BaseModel):
 
 
 class Row(BaseModel):
-    data: Dict[str, str]
+    data: Dict[str, str] = {}
     categories_includes: list[str] = []
 
 

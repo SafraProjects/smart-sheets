@@ -14,9 +14,10 @@ class DB:
 
     @staticmethod
     async def get_collection_db(db_name: str = None, collection_name: str = None):
+        DB._db_name = db_name or DB._db_name or "smart_sheets"
+        DB._collection_name = collection_name or DB._collection_name or "users"
+
         if DB._client is None:
-            DB._db_name = db_name or DB._db_name or "smart_sheets"
-            DB._collection_name = collection_name or DB._collection_name or "users"
             try:
                 DB._client = AsyncIOMotorClient(Env.get_DB_port())
             except Exception as error:

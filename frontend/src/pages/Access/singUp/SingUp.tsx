@@ -19,14 +19,11 @@ export const SingUp: React.FC = () => {
     emailValid: true,
     emailMessage: "",
     password: true,
-    // סטטוס של הסיסמא
   });
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isSecondPasswordVisible, setIsSecondPasswordVisible] = useState(false);
-
   const [isLoding, setIsLoding] = useState<boolean>(false);
-
   const [alert, setAlert] = useState<boolean>(false);
 
   const { getText } = useLanguage();
@@ -212,7 +209,7 @@ export const SingUp: React.FC = () => {
       <Alert
         isOpen={!formState.emailValid}
         // closeAt={15}
-        // closeButton={true}
+        closeButton={true}
         position="left"
         type="info"
         func={handelEmailFixed}
