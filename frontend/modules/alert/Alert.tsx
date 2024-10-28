@@ -22,9 +22,9 @@ interface AlertProp {
 }
 
 export const Alert: React.FC<AlertProp> = ({
-  isOpen = false,
-  closeAt,
+  isOpen,
   closeButton,
+  closeAt,
   type = "info",
   position = "top",
   mainMessage,
