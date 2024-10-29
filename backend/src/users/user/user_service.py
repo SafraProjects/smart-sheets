@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 from fastapi import (
     Depends,
     HTTPException,
@@ -80,6 +81,20 @@ class UserService:
 
         return {"message": "Table and metadata inserted/updated successfully", "status": True}
 
+    @staticmethod
+    async def get_table_by_id(table_id: str) -> dict:
+        return await DBS.DB.find({"_id": table_id})
+
+    @staticmethod
+    async def get_user_tables_by_id(user_id: str) -> dict:
+        result = await DBS.DB.find(
+            {"_id": {"$regex": f"^{user_id}"}},
+            collection_name=DBS.DB._coll_tables,
+            many=True,
+        )
+
+        return result or []
+
 # >>> row functions
 
     @staticmethod
@@ -112,9 +127,14 @@ class UserService:
     @staticmethod
     async def delete_row(table_id: str, row_id: str):
 
+        row_categories = await UserService.get_row_data(table_id, row_id, "categories_includes")
+
+        print(">>>>>> R-cat: ", row_categories)
         table_update = await DBS.DB.update(
             conditions={"_id": table_id},
-            replace={f"rows.{row_id}": ""},
+            increase={f"categories.{category}":
+                      -1 for category in row_categories},
+            replace={f"rows.{row_id}": None},
             collection_name=DBS.DB._coll_tables
         )
 
@@ -132,7 +152,7 @@ class UserService:
 
         return {"message": "Row deleted successfully", "status": True}
 
-    @staticmethod
+    @ staticmethod
     async def update_row(table_id: str, row_id: str, column_id: str, value):
 
         result = await DBS.DB.update(
@@ -148,21 +168,23 @@ class UserService:
         return result
 
     @staticmethod
-    async def get_row(table_id: str, row_id: str) -> int:
-
+    async def get_row_data(table_id: str, row_id: str, field: Optional[str] = None) -> dict:
         if not row_id.startswith("R-") or not row_id[2:].isdigit():
             return {"message": f"Invalid row index format: {row_id}", "status": False}
 
+        fields_to_fetch = {f"rows.{row_id}": 1} if not field else {
+            f"rows.{row_id}.{field}": 1}
+
         result = await DBS.DB.find(
             conditions={"_id": table_id},
-            fields={f"rows.{row_id}": 1},
+            fields=fields_to_fetch,
             collection_name=DBS.DB._coll_tables
         )
 
-        if not result:
-            raise ValueError("Table not found")
+        if not result or "rows" not in result or row_id not in result["rows"]:
+            raise ValueError("Row not found in the table")
 
-        return result["rows"]
+        return result["rows"][row_id] if field == "data" else result["rows"][row_id].get(field) if field else result["rows"]
 
     @staticmethod
     async def get_last_row(table_id: str, num: bool = False) -> int:
@@ -185,6 +207,7 @@ class UserService:
         if num:
             return int(last_index[2:])
         return result["rows"][last_index]
+
 
 # >>> columns functions
 
@@ -287,3 +310,28 @@ class UserService:
         if result["status"]:
             return {"message": "Column deleted successfully from the rows", "status": True}
         return {"message": "Failed to delete column from the rows", "status": False}
+
+    @staticmethod
+    async def add_row_category(table_id: str, row_id: str, category: str):
+
+        result = await DBS.DB.update(
+            conditions={"_id": table_id},
+            array_updates={f"rows.{row_id}.categories_includes": category},
+            increase={f"categories.{category}": 1},
+            collection_name=DBS.DB._coll_tables
+        )
+
+        if not result["status"]:
+            return {"message": "Failed to add category to row", "status": False}
+
+        # check first if there are changes in the num of categories
+
+        # metadata = await DBS.DB.update(
+        #     conditions={f"_id: {table_id.rsplit('-', 1)[0]}"},
+        #     increase={f"table_metadata.{table_id}.num_of_categories": 1},
+        # )
+
+        # if not metadata["status"]:
+        #     return {"message": "Failed to update category in metadata", "status": False}
+
+        return {"message": "Category added successfully in row and metadata", "status": True}

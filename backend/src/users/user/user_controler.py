@@ -41,6 +41,14 @@ async def test(request: Request, response: Response, user_id: str, table_name: s
     return table_db
 
 
+@router.get("/tables-all/u/{user_id}")
+@Auto.authenticate_user
+async def test(request: Request, response: Response, user_id: str):
+    print("user_id:", user_id)
+    table_db = await UserService.get_user_tables_by_id(user_id=user_id)
+    return table_db
+
+
 # rows API
 @router.post("/add-row/t/{table_id}")
 @Auto.authenticate_user
@@ -82,9 +90,27 @@ async def add_row(request: Request, response: Response, table_id: str, column_da
     return table_db
 
 
-@router.post("/delete-column/t/{table_id}")
+# in the mid of the process !!!!
+@router.post("/update-column/t/{table_id}/c/{column_id}/k/{key}/v/{value}")
+@Auto.authenticate_user
+async def add_row(request: Request, response: Response, table_id: str, column_id: str, key: str, value):
+    print("user_id:", table_id)
+    table_db = await UserService.update_column(table_id, column_id, key, value)
+    return table_db
+
+
+@router.post("/delete-column/t/{table_id}/c/{column_id}")
 @Auto.authenticate_user
 async def add_row(request: Request, response: Response, table_id: str, column_id: str):
     print("user_id:", table_id)
     table_db = await UserService.delete_column(table_id, column_id)
+    return table_db
+
+
+# >>> categories API
+@router.post("/add-row-category/t/{table_id}/r/{row_id}/v/{category}")
+@Auto.authenticate_user
+async def add_row(request: Request, response: Response, table_id: str, row_id: str, category: str):
+    print("user_id:", table_id)
+    table_db = await UserService.add_row_category(table_id, row_id, category)
     return table_db

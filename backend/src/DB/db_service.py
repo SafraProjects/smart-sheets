@@ -130,7 +130,8 @@ class DB:
                 "$set": updates or {}, "$unset": replace or {}}
 
             if array_updates:
-                update_operations["$push"] = array_updates
+                update_operations["$addToSet"] = {
+                    list(array_updates.keys())[0]: {"$each": list(array_updates.values())}}
 
             if array_removals:
                 update_operations["$pull"] = array_removals
@@ -139,6 +140,7 @@ class DB:
                 update_operations["$inc"] = increase
 
             if not many:
+                print(conditions, update_operations)
                 result = await db.update_one(conditions or {}, update_operations, upsert=upsert)
             else:
                 result = await db.update_many(conditions or {}, update_operations, upsert=upsert)
