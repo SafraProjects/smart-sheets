@@ -20,7 +20,7 @@ from src.models import (
     UserFront
 )
 
-from services.application import Env
+from services.environment import Env
 from src.DB import DB
 
 # oauth2_schema = OAuth2PasswordBearer(tokenUrl="token")

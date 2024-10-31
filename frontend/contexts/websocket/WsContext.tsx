@@ -1,34 +1,10 @@
-import React, {
-  createContext,
-  useState,
-  useEffect,
-  useContext,
-  ReactNode,
-} from "react";
-
-// טיפוסים
-type WebSocketData = {
-  [key: string]: any;
-};
-
-interface GlobalWebSocketContextProps {
-  data: WebSocketData;
-  connectWebSocket: () => void;
-}
-
-// יצירת הקונטקסט עם ערך התחלתי ריק
-const GlobalWebSocketContext = createContext<
-  GlobalWebSocketContextProps | undefined
->(undefined);
-
-interface GlobalWebSocketProviderProps {
-  children: ReactNode;
-}
+import React, { ReactNode, useContext, useEffect, useState } from "react";
+import { GlobalWebSocketContext, WebSocketData } from "./socketTypes";
 
 // ספק הקונטקסט
-export const GlobalWebSocketProvider: React.FC<
-  GlobalWebSocketProviderProps
-> = ({ children }) => {
+export const GlobalWebSocketProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [data, setData] = useState<WebSocketData>({});
   const [isConnected, setIsConnected] = useState<boolean>(false);
 

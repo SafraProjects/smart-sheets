@@ -1,6 +1,6 @@
 from typing import Union, Optional, List, Tuple
 from motor.motor_asyncio import AsyncIOMotorClient
-from services.application.app_service import Env
+from services.environment.env_service import Env
 import logging
 
 

@@ -1,1 +1,1 @@
-from .WebSoketService import router as WSRouter
+from .websocket_controller import router as WSRouter

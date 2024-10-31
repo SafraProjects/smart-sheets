@@ -1,7 +1,8 @@
 import os
 import smtplib
 from email.message import EmailMessage
-from services.application.app_service import Env
+from typing import Union
+from services.environment import Env
 from pydantic import EmailStr
 
 
@@ -37,7 +38,7 @@ class EmailService:
         server.quit()
         return a
 
-    def _add_attachment(msg: EmailMessage, files: str or list = []):  # type: ignore
+    def _add_attachment(msg: EmailMessage, files: Union[str, list] = []):
         if isinstance(files, str):
             files = [files]
 

@@ -2,17 +2,17 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 
 # >>> routers
-from services import WSRouter
+from services.websocket import WSRouter
 from src.users import user_router
 from src.auto import auto_router
-import services.application.app_service as App
+import services as Service
 
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[App.Env.get_frontend_port()],
+    allow_origins=[Service.Env.get_frontend_port()],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
